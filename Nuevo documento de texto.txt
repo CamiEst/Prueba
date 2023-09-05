@@ -1,0 +1,1616 @@
+Algoritmo Chaos
+	Definir personaje, enemigo, veces, combate, revivir, atacar, sanar, turno, turnoEnemigo, fuerza, fuerzaEnemigo, quemar, quemarEnemigo Como Entero;
+	Definir envenenar, envenenarEnemigo, noCurar,noCurarEnemigo, atacarExtra, atacarExtraEnemigo, vecesEnemigo, sangrar, sangrarEnemigo Como Entero;
+	Definir enemigoAtaque, atacarEnemigo, sanarEnemigo, countTurno, mejora, paralizar, paralisis, paralizarEnemigo, paralisisEnemigo, turnoActual Como Entero;
+	Definir vida, vidaEnemigo, costo, uso, damage, damageEnemigo, porcentaje, porcentajeEnemigo, copiaVida, copiaVidaEnemigo, energia, gasto, cura Como Real;
+	Definir curaEnemigo, copiaCura, copiaCuraEnemigo, incendio, incendioEnemigo, envenenamiento, envenenamientoEnemigo, antiCura, antiCuraEnemigo Como Real;
+	Definir Sangrado, sangradoEnemigo, damageTotal,damageTotalEnemigo, efectos, efectosEnemigos, costoEnemigo, usoEnemigo, electrocutar,electrocutarEnemigo Como Real;
+	Definir elegirPersonaje, nombrePersonaje, nombreAtaque1, nombreAtaque2, nombreAtaque3, ataque, elegirMejora Como Caracter;
+	Definir nombreEnemigo, ataqueEnemigo1, ataqueEnemigo2, ataqueEnemigo3, ataqueEnemigo, empezar Como Caracter;
+	turnoActual = 0;
+	costo = 1;
+	damageEnemigo = 0;
+	damage = 0;
+	vida = 0;
+	vidaEnemigo = 0; 
+	porcentaje = 0;
+	porcentajeEnemigo = 0;
+	veces = 1;
+	quemar = 0;
+	quemarEnemigo = 0;
+	fuerza = 0;
+	fuerzaEnemigo = 0;
+	envenenar = 0;
+	envenenarEnemigo = 0;
+	noCurar = 0;
+	noCurarEnemigo = 0;
+	antiCura = 0;
+	antiCuraEnemigo = 0;
+	atacarExtra = 0;
+	atacarExtraEnemigo = 0;
+	energia = 0;
+	incendio = 0;
+	incendioEnemigo = 0;
+	envenenamiento = 0;
+	envenenamientoEnemigo = 0;
+	turno = 1;
+	turnoEnemigo = 1;
+	sangrar = 0;
+	sangrarEnemigo = 0;
+	Sangrado = 0;
+	sangradoEnemigo = 0;
+	damageTotal = 0;
+	damageTotalEnemigo = 0;
+	efectos = 0;
+	efectosEnemigos =0;
+	ataqueEnemigo = "";
+	enemigoAtaque = 0;
+	usoEnemigo = 0;
+	countTurno = 1;
+	paralizar = 0;
+	paralisis = 0;
+	electrocutar = 0;
+	paralizarEnemigo = 0;
+	paralisisEnemigo = 0;
+	electrocutarEnemigo = 0;
+	
+	Escribir "Eliga su personaje:";
+	Escribir "Tanque / 1.";
+	Escribir "Comandante / 2.";
+	Escribir "Velocista / 3.";
+	Escribir "Mago / 4.";
+	Escribir "Caballero / 5.";
+	Escribir "Aleatorio / Cualquier carácter.";
+	Leer elegirPersonaje;
+	elegirPersonaje = (Mayusculas(elegirPersonaje));
+	
+	Segun elegirPersonaje Hacer
+		"1": personaje = 1;
+		"2": personaje = 2;
+		"3": personaje = 3;
+		"4": personaje = 4;
+		"5": personaje = 5;
+		De Otro Modo:
+			personaje = Aleatorio(1,5);
+	FinSegun
+	
+	Segun personaje Hacer
+		1:nombrePersonaje = "Tanque";
+			Escribir "Su personaje es: ", nombrePersonaje, ".";
+		2:nombrePersonaje = "Comandante";
+			Escribir "Su personaje es: ", nombrePersonaje, ".";
+			
+		3:nombrePersonaje = "Velocista";
+			Escribir "Su personaje es: ", nombrePersonaje, ".";
+			
+		4:nombrePersonaje = "Mago";
+			Escribir "Su personaje es: ", nombrePersonaje, ".";
+			
+		5:nombrePersonaje = "Caballero";
+			Escribir "Su personaje es: ", nombrePersonaje, ".";
+			
+	FinSegun
+	
+	//---------
+	Escribir personaje;
+	//---------
+	
+	Escribir "---///---///---";
+	
+	Segun nombrePersonaje Hacer
+		"Tanque": vida = 200;
+			nombreAtaque1 = "Ataque Fuerte";
+			nombreAtaque2 = "Devolver Ataque";
+			nombreAtaque3 = "LLuvia Golpes";
+			
+		"Comandante": vida = 170;
+			nombreAtaque1 = "Golpe De Bastón";
+			nombreAtaque2 = "Intangibilidad";
+			nombreAtaque3 = "Cuerpo Dividido";
+			
+		"Velocista": vida = 100;
+			nombreAtaque1 = "Ataque Rápido";
+			nombreAtaque2 = "Rayo De Luz";
+			nombreAtaque3 = "Aumento De Velocidad";
+			
+		"Mago": vida = 125;
+			nombreAtaque1 = "Bola De Fuego";
+			nombreAtaque2 = "Sanación Mágica";
+			nombreAtaque3 = "Rayo";
+			
+		"Caballero": vida = 150;
+			nombreAtaque1 = "Estocada";
+			nombreAtaque2 = "Quemadura";
+			nombreAtaque3 = "Inmune";
+			
+	FinSegun
+	copiaVida = vida;
+	Para combate = 1 Hasta 5 Con Paso 1 Hacer
+		
+		vida = copiaVida;
+		Segun combate Hacer
+			1: enemigo = Aleatorio(1,3); vida = Vida + 0;
+			2: enemigo = Aleatorio(4,6); vida = Vida + 25;
+			3: enemigo = Aleatorio(7,9); vida = Vida + 25;
+			4: enemigo = Aleatorio(10,12); vida = Vida + 25;
+			5: enemigo = Aleatorio(13,15); vida = Vida + 25;
+				
+		FinSegun
+		
+		Segun enemigo Hacer
+			1: nombreEnemigo = "Bestia";
+				vidaEnemigo = 50;
+				ataqueEnemigo1 = "Rasguño";
+				ataqueEnemigo2 = "Ladrido";
+				ataqueEnemigo3 = "Mordida";
+				
+			2: nombreEnemigo = "Zombie";
+				vidaEnemigo = 100;
+				ataqueEnemigo1 = "Golpe";
+				ataqueEnemigo2 = "Mordida Contagiosa";
+				ataqueEnemigo3 = "Morir Y Renacer";
+				
+			3: nombreEnemigo = "Saqueador";
+				vidaEnemigo = 75;
+				ataqueEnemigo1 = "Apuñalar";
+				ataqueEnemigo2 = "Atar";
+				ataqueEnemigo3 = "Robo De Fuerza";
+				
+	//--------------------------------------------------			
+			4: nombreEnemigo = "Slime";
+				vidaEnemigo = 100;
+				ataqueEnemigo1 = "Disparo De Baba";
+				ataqueEnemigo2 = "Baba Realentizante";
+				ataqueEnemigo3 = "Baba Venenosa";
+				
+			5: nombreEnemigo = "Esqueleto";
+				vidaEnemigo = 75;
+				ataqueEnemigo1 = "Golpes De Huesos";
+				ataqueEnemigo2 = "Susto";
+				ataqueEnemigo3 = "Morir Y Revivir";
+				
+			6: nombreEnemigo = "Serpiente";
+				vidaEnemigo = 70;
+				ataqueEnemigo1 = "Picadura Venenosa";
+				ataqueEnemigo2 = "Mudar De Piel";
+				ataqueEnemigo3 = "Estrangulamiento";
+				
+	//--------------------------------------------------
+			7: nombreEnemigo = "Bestia Gigante";
+				vidaEnemigo = 100;
+				ataqueEnemigo1 = "Super Rasguño";
+				ataqueEnemigo2 = "Aullido";
+				ataqueEnemigo3 = "Super Mordida";
+				
+			8: nombreEnemigo = "Slime Gigante";
+				vidaEnemigo = 150;
+				ataqueEnemigo1 = "Baba Flamable";
+				ataqueEnemigo2 = "Cuerpo Moldeable";
+				ataqueEnemigo3 = "LLuvia De Baba Venenosa";
+				
+			9: nombreEnemigo = "Bruja";
+				vidaEnemigo = 120;
+				ataqueEnemigo1 = "Escobazo Mágico";
+				ataqueEnemigo2 = "Antídoto";
+				ataqueEnemigo3 = "Poción Maligna";
+				
+	//--------------------------------------------------
+			10: nombreEnemigo = "Fénix";
+				vidaEnemigo = 175;
+				ataqueEnemigo1 = "LLamas Regenerativas";
+				ataqueEnemigo2 = "Abrasamiento";
+				ataqueEnemigo3 = "Renacimiento";
+				
+			11: nombreEnemigo = "Monstruo De Nieve";
+				vidaEnemigo = 200;
+				ataqueEnemigo1 = "Bola De Nieve";
+				ataqueEnemigo2 = "Tormenta De Nieve";
+				ataqueEnemigo3 = "Edad De Hielo";
+				
+			12: nombreEnemigo = "Madre Planta";
+				vidaEnemigo = 225;
+				ataqueEnemigo1 = "Espinas";
+				ataqueEnemigo2 = "Fotosíntesis";
+				ataqueEnemigo3 = "Mundo Verde";
+				
+	//--------------------------------------------------
+			13: nombreEnemigo = "Dragón";
+				vidaEnemigo = 500;
+				ataqueEnemigo1 = "LLamarada";
+				ataqueEnemigo2 = "Garra Intimidante";
+				ataqueEnemigo3 = "Caos";
+				
+			14: nombreEnemigo = "Mago Maestro";
+				vidaEnemigo = 375;
+				ataqueEnemigo1 = "Lazer De Los Elementos";
+				ataqueEnemigo2 = "Meteoros";
+				ataqueEnemigo3 = "Danza De Elementos";
+				
+			15: nombreEnemigo = "Entidad De Tiempo";
+				vidaEnemigo = 250;
+				ataqueEnemigo1 = "Golpe De Tiempo";
+				ataqueEnemigo2 = "Volver Al Pasado";
+				ataqueEnemigo3 = "Fin De Los Tiempos";								
+				
+		FinSegun
+		countTurno = 1;
+		copiaVida = vida;
+		copiaVidaEnemigo = vidaEnemigo;
+		
+		Escribir "Caminabas tranquilamente hasta que te encontraste con una/un: ", nombreEnemigo;
+		
+		Escribir "                 ";
+		Escribir "Presiona enter para continuar";
+		Leer empezar;
+		turnoActual = 0;
+		Repetir
+			turnoActual = turnoActual + 1;
+			damageTotal = 0;
+			turnoEnemigo = 1;
+			turno = 1;
+			cura = 0;
+			curaEnemigo = 0;
+			uso = 0;
+			usoEnemigo = 0;
+			costo = 0;
+			costoEnemigo = 0;
+			atacar = 0;
+			atacarEnemigo = 0;
+			sanar = 0;
+			sanarEnemigo = 0;
+			ataque = "";
+			countTurno = countTurno + 1;
+			
+			Mientras turno >= 1 & vida > 0 & vidaEnemigo > 0 Hacer
+				
+				
+				energia = energia + 25;
+				si energia > 100 Entonces
+					energia = 100;
+					
+				FinSi
+				Escribir "||------turno: ", turnoActual, "--------||";
+				Escribir "Enemigo: ", nombreEnemigo;
+				Escribir "Vida: ", vidaEnemigo;
+				Escribir "                 ";
+				Escribir "Tú: ", nombrePersonaje;
+				Escribir "Vida: ", vida;
+				Escribir "                 ";
+				Escribir "Energía Actual: ", energia;
+				
+				si atacarExtra < 1 Entonces
+					veces = 1;
+					
+				FinSi
+				
+				Repetir
+					Escribir "Elija que habilidad usar: ";
+					Escribir nombreAtaque1, ": 1 - Gasto de energia: 0";
+					Escribir nombreAtaque2, ": 2 - Gasto de energia: 33";
+					Escribir nombreAtaque3, ": 3 - Gasto de energia: 100";
+					Leer ataque;
+					
+					Segun ataque hacer
+						"1": gasto = 0;
+						"2": gasto = 33;
+						"3": gasto = 100;
+						De Otro Modo:
+							gasto = 0;
+							
+					FinSegun
+					
+					si gasto > energia Entonces
+						Escribir "El coste es mayor que tu energia, elige otra habilidad.";
+						Escribir "  ";
+						
+					FinSi
+					
+					
+				Hasta Que gasto <= energia;
+				
+				energia = energia - gasto;
+				
+				Segun ataque Hacer
+					"1": ataque = nombreAtaque1;
+					"2": ataque = nombreAtaque2;
+					"3": ataque = nombreAtaque3;
+					De Otro Modo:
+						ataque = nombreAtaque1;
+						
+				FinSegun
+				
+				Segun ataque hacer
+					"Ataque Fuerte": damage = 15.55; costo =  1; atacar = 1;
+					"Devolver Ataque": damage = (damageTotalEnemigo + efectosEnemigos) * 1; costo = 1; atacar = 1; cura = damage / 4; sanar = 1;
+					"LLuvia Golpes": damage = 10.55 * Aleatorio(2,5); costo = 1; atacar = 1;
+						//---------------------------------------------------------------------
+					"Golpe De Bastón": damage = 1.23456789 ^ veces; costo = 1; atacar = 1;
+					"Intangibilidad": fuerzaEnemigo = 2; porcentajeEnemigo = porcentajeEnemigo - 100;costo = 500; fuerza = 0; cura = (5) * veces; sanar = 1;
+					"Cuerpo Dividido": atacarExtra = 2; veces = Aleatorio(4,8); costo = 500; fuerzaEnemigo = 2; porcentajeEnemigo = porcentajeEnemigo - (veces * 2.5); cura = (veces * 2.5); sanar = 1;
+						//---------------------------------------------------------------------
+					"Ataque Rápido": damage = 7.5; costo = 0.5; atacar = 2;
+					"Rayo De Luz": damage = 0.3 * Aleatorio(61,91); costo = 1; atacar = 1;
+					"Aumento De Velocidad": atacarExtra = 2; veces = 2; costo = 5; turno = turno + 2;
+						//---------------------------------------------------------------------
+					"Bola De Fuego": damage = 12.25; incendioEnemigo = damage * (10) / 100; quemarEnemigo = quemarEnemigo + 10;
+						costo = 1; atacar = 1; noCurarEnemigo = 10; antiCuraEnemigo = antiCuraEnemigo - 30;
+					"Sanación Mágica": cura = 25; costo = 1; sanar = 1; fuerza = 0;
+					"Rayo": damage = 25; turno = turno + 1; costo = 1; atacar = 1;
+						//---------------------------------------------------------------------
+					"Estocada": damage = 15; costo = 1; atacar = 1; sangrarEnemigo = sangrarEnemigo + 2; sangradoEnemigo = 5;
+					"Quemadura": damage = 12.12; incendioEnemigo = damage * (50) / 100; quemarEnemigo = quemarEnemigo + 3;
+						fuerzaEnemigo = fuerzaEnemigo + 1; porcentajeEnemigo = porcentajeEnemigo - 25;  costo = 1; atacar = 1;
+					"Inmune": fuerzaEnemigo = fuerzaEnemigo + 2; porcentajeEnemigo = porcentajeEnemigo - 90;costo = 1;
+						quemar = 0; envenenar = 0; fuerza = 0; noCurar = 0; sangrar = 0; paralizar = 0;
+				FinSegun
+				
+				Segun combate Hacer
+					1: damage = damage + damage * (0)/100; cura = cura + cura * (0)/100;
+					2: damage = damage + damage * (5)/100; cura = cura + cura * (5)/100;
+					3: damage = damage + damage * (15)/100; cura = cura + cura * (15)/100;
+					4: damage = damage + damage * (30)/100; cura = cura + cura * (30)/100;
+					5: damage = damage + damage * (50)/100; cura = cura + cura * (50)/100;
+						
+				FinSegun
+				
+				Si porcentaje < -75 Entonces
+					porcentaje = -75;
+				FinSi
+				Si porcentaje > 75 Entonces
+					porcentaje = 75;
+				FinSi
+				
+				Si fuerza >= 1 Entonces
+					damage = damage + damage * (porcentaje) / 100;
+					fuerza = fuerza - 1;
+				SiNo
+					si fuerza < 1 Entonces
+						porcentaje = 0;
+						
+					FinSi
+					
+				FinSi
+				
+				Si antiCura < -75 Entonces
+					antiCura = -75;
+				FinSi
+				Si antiCura > 75 Entonces
+					antiCura = 75;
+				FinSi
+				
+				Si noCurar >= 1 Entonces
+					cura = cura + cura * (antiCura) / 100;
+					noCurar = noCurar - 1;
+				SiNo
+					si noCurar < 1 Entonces
+						antiCura = 0;
+						
+					FinSi
+					
+				FinSi
+				
+				Si atacarExtra >= 1 Entonces
+					sanar = sanar * veces;
+					atacar = atacar * veces;
+					costo = costo / veces;
+					atacarExtra = atacarExtra - 1;
+				SiNo
+					si atacarExtra < 1 Entonces
+						veces = 1;
+						
+					FinSi
+					
+				FinSi
+				
+				
+				
+				Repetir
+					Escribir "El ataque que vas a utilizar es: ", ataque;
+					Escribir "                 ";
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+					Escribir "                 ";
+					
+					uso = uso + costo;
+					
+					si atacar >= 1 Entonces
+						
+						vidaEnemigo = vidaEnemigo - damage;
+						
+						Escribir "Daño causado: ", damage;
+						Escribir "                 ";
+						Escribir "Vida del enemigo: ", vidaEnemigo;
+						Escribir "                 ";
+						
+						Escribir "Presione enter para continuar";
+						Leer empezar;
+						atacar = atacar - 1;
+						
+					FinSi
+					
+					Si sanar >= 1 Entonces
+						
+						si vida < copiaVida Entonces
+							vida = vida + cura;
+							copiaCura = cura;
+						FinSi
+						si vida > copiaVida entonces 
+							copiaCura = cura - (vida - copiaVida);
+							vida = copiaVida;
+						FinSi
+						
+						Escribir "Te curaste: ", copiaCura;
+						Escribir "                 ";
+						Escribir "Tu vida: ", vida;
+						Escribir "                 ";
+						
+						Escribir "Presione enter para continuar";
+						Leer empezar;
+						sanar = sanar - 1;
+						
+					FinSi
+					
+					damageTotal = damageTotal + damage;
+					
+				Hasta Que uso >= 1 | vidaEnemigo <= 0
+				
+				uso = 0;
+				
+				si quemar > 10 Entonces
+					quemar = 10;
+				FinSi
+				
+				Si quemar >= 1 Entonces
+					vida = vida - incendio;
+					quemar = quemar - 1;
+					Escribir "Daño hecho por quemadura: ", incendio;
+					Escribir "                 ";
+					Escribir "Tu vida: ", vida;
+					Escribir "                 ";
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si quemar < 1 Entonces
+						incendio = 0;
+					FinSi
+				FinSi
+				
+				si envenenar > 10 Entonces
+					envenenar = 10;
+				FinSi
+				
+				Si envenenar >= 1 Entonces
+					vida = vida - envenenamiento;
+					envenenar = envenenar - 1;
+					Escribir "Daño hecho por envenenamiento: ", envenenamiento;
+					Escribir "                 ";
+					Escribir "Tu vida: ", vida;
+					Escribir "                 ";
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si envenenar < 1 Entonces
+						envenenamiento = 0;
+					FinSi
+				FinSi
+				
+				si sangrar > 10 Entonces
+					sangrar = 10;
+				FinSi
+				
+				Si sangrar >= 1 Entonces
+					vida = vida - Sangrado;
+					sangrar = sangrar - 1;
+					Escribir "Daño hecho por sangrado: ", Sangrado;
+					Escribir "                 ";
+					Escribir "Tu vida: ", vida;
+					Escribir "                 ";
+					
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si sangrar < 1 Entonces
+						sangrado = 0;
+					FinSi
+				FinSi
+				
+				Si paralizar >= 1 Entonces
+					vida = vida - electrocutar;
+					paralizar = paralizar - 1;
+					paralisis = Aleatorio(1,10);
+					
+					
+					Escribir "Daño hecho por electrocucción: ", electrocutar;
+					Escribir "                 ";
+					Escribir "Tu vida: ", vida;
+					Escribir "                 ";
+					si paralisis == 10 Entonces
+						Escribir "Has sido paralizado";
+					FinSi
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si paralizar < 1 Entonces
+						paralizar = 0;
+					FinSi
+				FinSi
+				si paralisis == 10 Entonces
+					turno = 0;
+				FinSi
+				
+				turno = turno - 1;
+				
+				efectosEnemigos = incendio + envenenamiento + Sangrado + electrocutar;
+				
+			FinMientras
+			si vidaEnemigo >= 1 Entonces
+				Escribir "----";
+				Escribir "Turno Del Enemigo";
+				Escribir "  ";
+				Escribir "Presione enter para continuar";
+				Leer empezar;
+			sino
+				si vidaEnemigo < 1 Entonces
+					Escribir "Has ganado este combate";
+					Escribir "  ";
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				FinSi
+			FinSi
+			
+			
+			damageTotalEnemigo = 0;
+			turno = 1;
+			si paralisis == 10 Entonces
+				turno = 0;
+			FinSi
+			paralisis = 0;
+			
+			
+			Mientras turnoEnemigo >= 1 & vida > 0 & vidaEnemigo > 0 Hacer
+				
+				si atacarExtraEnemigo < 1 Entonces
+					vecesEnemigo = 1;
+					
+				FinSi
+				
+				enemigoAtaque = Aleatorio(1,100);
+				Segun nombreEnemigo Hacer
+					"Bestia": Si vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (26)/100) Entonces
+							
+									si enemigoAtaque >= 76 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (26)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 91 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 91 & enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Zombie": Si vidaEnemigo >= (copiaVidaEnemigo * (66)/100) Entonces
+							
+									si enemigoAtaque >= 41 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (66)/100) & vidaEnemigo >= (copiaVidaEnemigo * (11)/100) Entonces
+							
+									si enemigoAtaque >= 61 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 11 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 16 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (11)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 90 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 90 & enemigoAtaque >= 80 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 80 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						
+					"Saqueador": Si vidaEnemigo >= (copiaVidaEnemigo * (67)/100) Entonces
+							
+									si enemigoAtaque >= 41 entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 36 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 36 & enemigoAtaque >= 1 entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+								
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (67)/100) & vidaEnemigo >= (copiaVidaEnemigo * (34)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 41 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (34)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 56 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 56 & enemigoAtaque >= 41 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+//---------------------------------------------------------------------------------------------------------------------------
+					"Slime": Si vidaEnemigo >= (copiaVidaEnemigo * (67)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 25 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 25 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (67)/100) & vidaEnemigo >= (copiaVidaEnemigo * (34)/100) Entonces
+							
+									si enemigoAtaque >= 67 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 67 & enemigoAtaque >= 34 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 34 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (34)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 61 entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 61 & enemigoAtaque >= 41 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Esqueleto": Si vidaEnemigo >= (copiaVidaEnemigo * (76)/100) Entonces
+							
+									si enemigoAtaque >= 25 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 25 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (76)/100) & vidaEnemigo >= (copiaVidaEnemigo * (21)/100) Entonces
+							
+									si enemigoAtaque >= 61 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 61 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (21)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 90 entonces 
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 90 & enemigoAtaque >= 80 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 80 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						
+						
+					"Serpiente": Si vidaEnemigo >= (copiaVidaEnemigo * (81)/100) Entonces
+							
+									si enemigoAtaque >= 6 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 6 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (81)/100) & vidaEnemigo >= (copiaVidaEnemigo * (41)/100) Entonces
+							
+									si enemigoAtaque >= 56 entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 56 & enemigoAtaque >= 16 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 16 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (41)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 76 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+//---------------------------------------------------------------------------------------------------------------------------
+					"Bestia Gigante": Si vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (26)/100) Entonces
+							
+									si enemigoAtaque >= 76 entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (26)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 91 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 91 & enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Slime Gigante": Si vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 21 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 21 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (26)/100) Entonces
+							
+									si enemigoAtaque >= 61 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 61 & enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (26)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 76 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Bruja": Si vidaEnemigo >= (copiaVidaEnemigo * (81)/100) Entonces
+							
+									si enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (81)/100) & vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 76 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 76 & enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 76 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 91 & enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+//---------------------------------------------------------------------------------------------------------------------------
+					"Fénix": Si vidaEnemigo >= (copiaVidaEnemigo * (91)/100) Entonces
+							
+									si enemigoAtaque >= 96 entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 96 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (91)/100) & vidaEnemigo >= (copiaVidaEnemigo * (21)/100) Entonces
+							
+									si enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 6 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 6 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (21)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 41 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 41 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Monstruo De Nieve": Si vidaEnemigo >= (copiaVidaEnemigo * (61)/100) Entonces
+							
+									si enemigoAtaque >= 37 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 37 & enemigoAtaque >= 2 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 2 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (61)/100) & vidaEnemigo >= (copiaVidaEnemigo * (31)/100) Entonces
+							
+									si enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 6 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 6 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (31)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 56 & enemigoAtaque >= 11 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 11 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Madre Planta": Si vidaEnemigo >= (copiaVidaEnemigo * (86)/100) Entonces
+							
+									si enemigoAtaque >= 11 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 11 & enemigoAtaque >= 6 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 6 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (86)/100) & vidaEnemigo >= (copiaVidaEnemigo * (36)/100) Entonces
+							
+									si enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 26 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 26 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (36)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 86 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 86 & enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+//---------------------------------------------------------------------------------------------------------------------------
+					"Dragón": Si vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (26)/100) Entonces
+							
+									si enemigoAtaque >= 51 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 51 & enemigoAtaque >= 11 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 11 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (26)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 71 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 71 & enemigoAtaque >= 31 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 31 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Mago Maestro": Si vidaEnemigo >= (copiaVidaEnemigo * (76)/100) Entonces
+							
+									si enemigoAtaque >= 47 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 47 & enemigoAtaque >= 24 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 24 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (76)/100) & vidaEnemigo >= (copiaVidaEnemigo * (51)/100) Entonces
+							
+									si enemigoAtaque >= 57 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 57 & enemigoAtaque >= 29 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 29 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (51)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 67 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 67 & enemigoAtaque >= 34 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 34 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+					"Entidad De Tiempo": Si vidaEnemigo >= (copiaVidaEnemigo * (81)/100) Entonces
+							
+									si enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 1 & enemigoAtaque >= 0 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (81)/100) & vidaEnemigo >= (copiaVidaEnemigo * (21)/100) Entonces
+							
+									si enemigoAtaque >= 36 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 36 & enemigoAtaque >= 6 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 6 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+						FinSi
+						Si vidaEnemigo < (copiaVidaEnemigo * (21)/100) & vidaEnemigo >= (copiaVidaEnemigo * (1)/100) Entonces
+							
+									si enemigoAtaque >= 86 Entonces
+										ataqueEnemigo = ataqueEnemigo1;
+									FinSi
+									si enemigoAtaque < 86 & enemigoAtaque >= 46 Entonces
+										ataqueEnemigo = ataqueEnemigo2;
+									FinSi
+									si enemigoAtaque < 46 & enemigoAtaque >= 1 Entonces
+										ataqueEnemigo = ataqueEnemigo3;
+									FinSi
+									
+							
+							
+							
+						FinSi
+						
+						
+				FinSegun
+				
+				//damage = (); costo = costo + (); atacar = (); turno = turno + (); quemar = (); coCurar = (); envenenar = ();
+				Segun ataqueEnemigo Hacer
+					"Rasguño": damageEnemigo = (10); costoEnemigo = (1); atacarEnemigo = (1);
+					"Ladrido": damageEnemigo = (5); costoEnemigo = (1); atacarEnemigo = (1); fuerzaEnemigo = (3); porcentajeEnemigo = porcentajeEnemigo + (30);
+					"Mordida": damageEnemigo = (20); atacarEnemigo = (1); curaEnemigo = (20); sanarEnemigo = (1); costoEnemigo = (1);
+						//---------------------------------------------------	
+					"Golpe": damageEnemigo = (15); costoEnemigo = (1); atacarEnemigo = (1);
+					"Mordida Contagiosa": damageEnemigo = (7.5); costoEnemigo = (1); atacarEnemigo = (1); envenenar = envenenar + (3); envenenamiento = (7.5); fuerza = (3); porcentaje = (7.5);
+					"Morir Y Renacer": curaEnemigo = (70); sanarEnemigo = (1); costoEnemigo = (1);
+						//---------------------------------------------------
+					"Apuñalar": damageEnemigo = (5.5); costoEnemigo = (0.5); atacarEnemigo = (2);
+					"Atar": damageEnemigo = (5); costoEnemigo = (1); atacarEnemigo = (1); turnoEnemigo = turnoEnemigo + (1);
+					"Robo De Fuerza": damageEnemigo = (2.5); costoEnemigo = (1); atacarEnemigo = (1); fuerza = (3); porcentaje = porcentaje - (50); fuerzaEnemigo = (50); porcentajeEnemigo = porcentajeEnemigo + (50);
+						//---------------------//
+					"Disparo De Baba": damageEnemigo = (15); costoEnemigo = (1); atacarEnemigo = (1);
+					"Baba Realentizante": damageEnemigo = (10); costoEnemigo = (1); atacarEnemigo = (1); fuerza = (2); porcentaje = porcentaje - (10);
+					"Baba Venenosa":  damageEnemigo = (18); costoEnemigo = (1); atacarEnemigo = (1); envenenar = envenenar + (2); envenenamiento = 9;
+						//---------------------------------------------------
+					"Golpes De Huesos":damageEnemigo = (3.3) * Aleatorio(5,7); costoEnemigo = (1); atacarEnemigo = (1);
+					"Susto": damageEnemigo = (5); costoEnemigo = (1); atacarEnemigo = (1); fuerza = (2); porcentaje = porcentaje - (25);
+					"Morir Y Revivir": curaEnemigo = (60); sanarEnemigo = (1); costoEnemigo = (1); 
+						//---------------------------------------------------	
+					"Picadura Venenosa": damageEnemigo = (10); costoEnemigo = (1); atacarEnemigo = (1); envenenar = (4); envenenamiento = (5);
+					"Mudar De Piel": curaEnemigo = (25); sanarEnemigo = (1); costoEnemigo = (1);
+					"Estrangulamiento": damageEnemigo = (30); costoEnemigo = (1); atacarEnemigo = (1); turnoEnemigo = turnoEnemigo + (1);
+						//----------------------//	
+					"Super Rasguño": damageEnemigo = (20); costoEnemigo = (1); atacarEnemigo = (1); sangrar = sangrar + (2); sangrado = (5);
+					"Aullido": damageEnemigo = (10); costoEnemigo = (1); atacarEnemigo = (1); fuerzaEnemigo = (3); porcentajeEnemigo = porcentajeEnemigo + (20);
+					"Super Mordida": damageEnemigo = (40); atacarEnemigo = (1); curaEnemigo = (20); sanarEnemigo = (1); costoEnemigo = (1); sangrar = sangrar + (4); sangrado = (5);
+						//---------------------------------------------------
+					"Baba Flamable": damageEnemigo = (10.5); costoEnemigo = (1); atacarEnemigo = (1); quemar = quemar + (2); incendio = (5.25);
+					"Cuerpo Moldeable": damageEnemigo = (damageTotal + efectos) / 2; costoEnemigo = (1); atacarEnemigo = (1); fuerza = (1); porcentaje = porcentaje - (10000); curaEnemigo = (damageEnemigo); sanarEnemigo = (1);
+					"LLuvia De Baba Venenosa": damageEnemigo = (1) * Aleatorio(10,20); costoEnemigo = (1); atacarEnemigo = (1); envenenar = envenenar + (10); envenenamiento = damageEnemigo + (10)/100;
+						//---------------------------------------------------	
+					"Escobazo Mágico": damageEnemigo = (20.2); costoEnemigo = (1); atacarEnemigo = (1);
+					"Antídoto": curaEnemigo = (15.5); sanarEnemigo = (1); costoEnemigo = (1); quemarEnemigo = (0); envenenarEnemigo = (0); sangrarEnemigo = (0); fuerzaEnemigo = (0); noCurarEnemigo = (0); paralizarEnemigo = 0;
+					"Poción Maligna":  damageEnemigo = (15.5); costoEnemigo = (1); atacarEnemigo = (1); quemar = (2); incendio = (7.75); envenenar = (2); envenenamiento = (7.75); sangrar = (2); sangrado = (7.75); fuerza = (2); porcentaje = porcentaje - (15.5); noCurar = (2); antiCura = antiCura - (10000); atacarExtra = (0); paralizar = (2); electrocutar = (7.75);
+						//----------------------//
+					"LLamas Regenerativas": curaEnemigo = (75); sanarEnemigo = (1); damageEnemigo = (5); costoEnemigo = (1); atacarEnemigo = (1); quemar = quemar + (2); incendio = (5);
+					"Abrasamiento": damageEnemigo = (25); costoEnemigo = (1); atacarEnemigo = (1); quemar = quemar + (10); incendio = (5);
+					"Renacimiento":  curaEnemigo = (150); sanarEnemigo = (1); costoEnemigo = (1); 
+						//---------------------------------------------------	
+					"Bola De Nieve": damageEnemigo = (3.3) * countTurno; costoEnemigo = (1); atacarEnemigo = (1); fuerza = (3); porcentaje = porcentaje - (25);
+					"Tormenta De Nieve": damageEnemigo = (0.5) * Aleatorio(50,100); costoEnemigo = (1); atacarEnemigo = (1); fuerza = (3); porcentaje = porcentaje - (25);
+					"Edad De Hielo": damageEnemigo = (55.5); costoEnemigo = (1); atacarEnemigo = (1); fuerza = (3); porcentaje = porcentaje - (25); turnoEnemigo = turnoEnemigo + (1);
+						//---------------------------------------------------
+					"Espinas": damageEnemigo = (12.5) * Aleatorio(1,3); costoEnemigo = (1); atacarEnemigo = (1); sangrar = sangrar + (3); sangrado = damage * (10)/100;
+					"Fotosíntesis": curaEnemigo = (50); sanarEnemigo = (1); costoEnemigo = (1); fuerzaEnemigo = (3); porcentajeEnemigo = porcentajeEnemigo + (20);
+					"Mundo Verde": atacarExtraEnemigo = (1); vecesEnemigo = Aleatorio(8,11); damageEnemigo = (0.6) * vecesEnemigo; costoEnemigo = (1); atacarEnemigo = (1);
+						//---------------------//
+					"LLamarada": damageEnemigo = (1.222) ^ Aleatorio(10,20); costoEnemigo = (1); atacarEnemigo = (1);
+					"Garra Intimidante": damageEnemigo = (50); costoEnemigo = (1); atacarEnemigo = (1); sangrar = sangrar + (5); sangrado = (5); fuerza = (2); porcentaje = porcentaje - (30);
+					"Caos": damageEnemigo = (copiaVidaEnemigo - vidaEnemigo) / (2); costoEnemigo = (1); atacarEnemigo = (1);
+						//---------------------------------------------------	
+					"Lazer De Los Elementos": damageEnemigo = (2.2) * Aleatorio(10,20); costoEnemigo = (1); atacarEnemigo = (1); quemar = quemar + (1); incendio = (3.3); noCurar = noCurar + (1); antiCura = (33.33); paralizar = paralizar + (1); electrocutar = (6.6);
+					"Meteoros": damageEnemigo = (10); costoEnemigo = (1); atacarEnemigo = (1); atacarExtraEnemigo = (1); vecesEnemigo = Aleatorio(1,10); fuerza = (2); porcentaje = porcentaje - ((10) * vecesEnemigo);
+					"Danza De Elementos":damageEnemigo = (10.08) * Aleatorio(3,5); costoEnemigo = (1); atacarEnemigo = (1); quemar = quemar + (3); incendio = (3.3); envenenar =  envenenar + (3); envenenamiento = (4.4); sangrar = sangrar + (3); sangrado = (5.5);  paralizar = paralizar + (3); electrocutar = (6.6);
+						//---------------------------------------------------
+					"Golpe De Tiempo": damageEnemigo = copiaVida * (10)/100; costoEnemigo = (1); atacarEnemigo = (1);
+					"Volver Al Pasado": curaEnemigo = (damageTotal + efectos); sanarEnemigo = (1); turno = turno + (1);
+					"Fin De Los Tiempos": damageEnemigo = Vida * (50)/100; costoEnemigo = (1); atacarEnemigo = (1);
+						
+				FinSegun
+				
+				Si porcentajeEnemigo < -75 Entonces
+					porcentajeEnemigo = -75;
+				FinSi
+				Si porcentajeEnemigo > 75 Entonces
+					porcentajeEnemigo = 75;
+				FinSi
+				
+				Si fuerzaEnemigo >= 1 Entonces
+					damageEnemigo = damageEnemigo + damageEnemigo * (porcentajeEnemigo) / 100;
+					fuerzaEnemigo = fuerzaEnemigo - 1;
+				SiNo
+					si fuerzaEnemigo < 1 Entonces
+						porcentajeEnemigo = 0;
+						
+					FinSi
+					
+				FinSi
+				
+				Si antiCuraEnemigo < -75 Entonces
+					antiCuraEnemigo = -75;
+				FinSi
+				Si antiCuraEnemigo > 75 Entonces
+					antiCuraEnemigo = 75;
+				FinSi
+				
+				Si noCurarEnemigo >= 1 Entonces
+					curaEnemigo = curaEnemigo + curaEnemigo * (antiCuraEnemigo) / 100;
+					noCurarEnemigo = noCurarEnemigo - 1;
+				SiNo
+					si noCurarEnemigo < 1 Entonces
+						antiCuraEnemigo = 0;
+						
+					FinSi
+					
+				FinSi
+				
+				Si atacarExtraEnemigo >= 1 Entonces
+					sanarEnemigo = sanarEnemigo * veces;
+					atacarEnemigo = atacarEnemigo * vecesEnemigo;
+					costoEnemigo = costoEnemigo / vecesEnemigo;
+					atacarExtraEnemigo = atacarExtraEnemigo - 1;
+				SiNo
+					si atacarExtraEnemigo < 1 Entonces
+						vecesEnemigo = 1;
+						
+					FinSi
+					
+				FinSi
+				
+				
+				Repetir
+					
+					Escribir "El ataque que el enemigo va a utilizar es: ", ataqueEnemigo;
+					Escribir "                 ";
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+					Escribir "                 ";
+					
+					usoEnemigo = usoEnemigo + costoEnemigo;
+					
+					si atacarEnemigo >= 1 Entonces
+						
+						vida = vida - damageEnemigo;
+						
+						Escribir "Daño causado: ", damageEnemigo;
+						Escribir "                 ";
+						Escribir "Tu vida es: ", vida;
+						Escribir "                 ";
+						
+						Escribir "Presione enter para continuar";
+						Leer empezar;
+						atacarEnemigo = atacarEnemigo - 1;
+						
+					FinSi
+					
+					Si sanarEnemigo >= 1 Entonces
+						
+						si vidaEnemigo < copiaVidaEnemigo Entonces
+							vidaEnemigo = vidaEnemigo + curaEnemigo;
+							copiaCuraEnemigo = curaEnemigo;
+							
+						FinSi
+						
+						si vidaEnemigo > copiaVidaEnemigo entonces 
+							copiaCuraEnemigo = curaEnemigo - (vidaEnemigo - copiaVidaEnemigo);
+							vidaEnemigo = copiaVidaEnemigo;
+						FinSi
+						
+						
+						
+						Escribir "El enemigo se curó: ", copiaCuraEnemigo;
+						Escribir "                 ";
+						Escribir "Vida del enemigo: ", vidaEnemigo;
+						Escribir "                 ";
+						
+						Escribir "Presione enter para continuar";
+						Leer empezar;
+						sanarEnemigo = sanarEnemigo - 1;
+						
+					FinSi
+					
+					damageTotalEnemigo = damageTotalEnemigo + damageEnemigo;
+					
+					
+				Hasta Que usoEnemigo >= 1 | vida <= 0
+				
+				usoEnemigo = 0;
+				
+				si quemarEnemigo > 10 Entonces
+					quemarEnemigo = 10;
+				FinSi
+				
+				Si quemarEnemigo >= 1 Entonces
+					vidaEnemigo = vidaEnemigo - incendioEnemigo;
+					quemarEnemigo = quemarEnemigo - 1;
+					Escribir "Daño hecho por quemadura: ", incendioEnemigo;
+					Escribir "                 ";
+					Escribir "Vida del enemigo: ", vidaEnemigo;
+					Escribir "                 ";
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si quemarEnemigo < 1 Entonces
+						incendioEnemigo = 0;
+					FinSi
+				FinSi
+				
+				si envenenarEnemigo > 10 Entonces
+					envenenarEnemigo = 10;
+				FinSi
+				
+				Si envenenarEnemigo >= 1 Entonces
+					vidaEnemigo = vidaEnemigo - envenenamientoEnemigo;
+					envenenarEnemigo = envenenarEnemigo - 1;
+					Escribir "Daño hecho por envenenamiento: ", envenenamientoEnemigo;
+					Escribir "                 ";
+					Escribir "Vida del enemigo: ", vidaEnemigo;
+					Escribir "                 ";
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si envenenarEnemigo < 1 Entonces
+						envenenamientoEnemigo = 0;
+					FinSi
+				FinSi
+				
+				si sangrarEnemigo > 10 Entonces
+					sangrarEnemigo = 10;
+				FinSi
+				
+				Si sangrarEnemigo >= 1 Entonces
+					vidaEnemigo = vidaEnemigo - sangradoEnemigo;
+					sangrarEnemigo = sangrarEnemigo - 1;
+					Escribir "Daño hecho por sangrado: ", sangradoEnemigo;
+					Escribir "                 ";
+					Escribir "Vida del enemigo: ", vidaEnemigo;
+					Escribir "                 ";
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si sanarEnemigo < 1 Entonces
+						sangradoEnemigo = 0;
+					FinSi
+				FinSi
+				
+				Si paralizarEnemigo >= 1 Entonces
+					vidaEnemigo = vidaEnemigo - electrocutarEnemigo;
+					paralizarEnemigo = paralizarEnemigo - 1;
+					paralisisEnemigo = Aleatorio(1,10);
+					
+					
+					Escribir "Daño hecho por electrocucción: ", electrocutarEnemigo;
+					Escribir "                 ";
+					Escribir "Vida del enemigo: ", vidaEnemigo;
+					Escribir "                 ";
+					si paralisisEnemigo == 10 Entonces
+						Escribir "Has sido paralizado";
+					FinSi
+					
+					Escribir "Presione enter para continuar";
+					Leer empezar;
+				SiNo
+					si paralizarEnemigo < 1 Entonces
+						paralizarEnemigo = 0;
+					FinSi
+				FinSi
+				si paralisisEnemigo == 10 Entonces
+					turnoEnemigo = 0;
+				FinSi
+				turnoEnemigo = turnoenemigo - 1;
+				
+				efectos = incendioEnemigo + envenenamientoEnemigo + sangradoEnemigo + electrocutarEnemigo;
+				
+				
+			FinMientras
+			
+			damageTotal = 0;
+			turnoEnemigo = 1;
+			si paralisisEnemigo == 10 Entonces
+				turnoEnemigo = 0;
+			FinSi
+			paralisisEnemigo = 0;
+//-------------------------------------------------------------
+			
+		Hasta Que vida <= 0 | vidaEnemigo <= 0
+		
+		
+		veces = 1;
+		vecesEnemigo = 1;
+		porcentaje = 1;
+		porcentajeEnemigo = 1;
+		antiCura = 1;
+		antiCuraEnemigo = 1;
+		noCurar = 0;
+		noCurarEnemigo = 0;
+		fuerza = 0;
+		fuerzaEnemigo = 0;
+		atacarExtra = 0;
+		atacarExtraEnemigo = 0;
+		quemar = 0;
+		quemarEnemigo = 0;
+		envenenar = 0;
+		envenenamientoEnemigo = 0;
+		incendio = 0;
+		incendioEnemigo = 0;
+		envenenamiento = 0;
+		envenenamientoEnemigo = 0;
+		sangrar = 0;
+		sangrarEnemigo = 0;
+		sangrado = 0;
+		sangradoEnemigo = 0;
+		energia = 0;
+		curaEnemigo = 0;
+		cura = 0;
+		uso = 0;
+		usoEnemigo = 0;
+		costo = 0;
+		costoEnemigo = 0;
+		atacar = 0;
+		atacarEnemigo = 0;
+		sanar = 0;
+		sanarEnemigo = 0;
+		ataque = "";
+		ataqueEnemigo = "";
+		turno = 1;
+		turnoEnemigo = 1;
+		damageTotal = 0;
+		damageTotalEnemigo = 0;
+		atacarExtra = 0;
+		atacarExtraEnemigo = 0;
+		
+		si vida <= 0 Entonces
+			combate = 10;
+			Escribir "Has perdido";
+			
+		FinSi
+	
+	FinPara
+ 
+FinAlgoritmo

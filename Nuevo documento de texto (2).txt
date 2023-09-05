@@ -1,0 +1,3004 @@
+Algoritmo Chaos02
+	Definir seleccionar, personaje, enemigo, habilidad, habilidadEnemigo, seleccionarEnemigo, aumento, especie, especieEnem, elemento, elementoEnem Como Caracter;
+	Definir elegir, combate, enemigoElegido, x, personajeElegido, a, b, c, turno, habilidadElegida, ataque, ataqueEnemigo, energia, costoEnergia, energiaMaxima Como Entero;
+	Definir confirmar, i, durAumentador, atacarExtra, durAttExtra, turnoExtra, e, durMasDef, durMenDefEnem, durMenDef, durMasDefEnem Como Entero;
+	Definir vida, vidaEnemigo, vidaMaxima, auxVE, auxV, trueDmg,damageTotalEnemigo, efectos, efectosEnemigos, damage, damageEnemigo, cura, curaEnemigo Como Real;
+	Definir vidaMaximaEnem, totalDamage, totalDamageEnemigo, trueHeal, totalEfectos, totalEfectosEnemigos, multiplicador, costo, costoEnemigo, maximoCosto, masDefensa Como real;
+	Definir dmg, dmgEnemy, heal, healEnemy, d, aumentador, costoActual, vidaAumentada, menDefEnem, menDef, masDefensaEnem, def, defEnemy Como Real;
+	Definir atacar, atacarEnemigo, sanar, sanarEnemigo, esSuficiente, esTuTurno, seAumenta Como Logico;
+	x = 0; dmg = 1; dmgEnemy = 1;
+	totalDamage = 0; totalDamageEnemigo = 0; totalEfectos = 0; totalEfectosEnemigos = 0; energiaMaxima = 100; seAumenta = Falso; atacarExtra = 1; turnoExtra = 0; vidaAumentada = 1;
+	Dimension damage[8,3], cura[8,3], trueDmg[1], trueHeal[1],efectos[1], auxV[8], personaje[8], enemigo[8,8], habilidad[8,3], habilidadEnemigo[8,8,3], auxVE[8,8];
+	Dimension damageEnemigo[8,8,3], multiplicador[8,3], atacar[8,3], atacarEnemigo[8,8,3], costo[8,3], costoEnemigo[8,8,3], sanar[8,3], costoEnergia[3];
+	Dimension aumentador[1], durAumentador[1], aumento[1], durAttExtra[1], durMasDef[1], durMenDefEnem[1], durMenDef[1], durMasDefEnem[1];
+	Dimension especie[8], especieEnem[8,8], elemento[8,3], elementoEnem[8,8,3];
+	especies(especie, especieEnem);
+	elementos(elemento, elementoEnem);
+	vidasBases(auxV, auxVE);
+	personajes(personaje);
+	habilidades(habilidad);
+	enemigos(enemigo);
+	habilidadesEnemigos(habilidadEnemigo);
+	Energy(costoEnergia);
+	durAttExtra[0] = 0;
+	
+	Repetir
+		elegir = mode(x);
+		x = elegir;
+		Segun elegir Hacer
+			1:
+				seleccionar = elegirPersonajeHistoria(personaje, auxV, habilidad, especie, elemento);
+				personajeElegido = personajeSeleccionado(seleccionar);
+				vida = auxV[personajeElegido];
+				introduccionHistoria(personajeElegido);
+				Para combate = 0 Hasta 7 Con Paso 1 Hacer
+					turno = 0; ataque = 1; ataqueEnemigo = 0; energia = 0; def = 0; defEnemy = 0;
+					aumentador[0] = 1; durAumentador[0] = 0; aumento[0] = "*"; atacarExtra = 1; durAttExtra[0] = 0; masDefensa = 0; durMasDef[0] = 0;
+					menDefEnem = 0; durMenDefEnem[0] = 0; menDef = 0; durMenDef[0] = 0; masDefensaEnem = 0; durMasDefEnem[0] = 0;
+					a = personajeElegido; b = combate; e = personajeElegido;
+					vida = vidas(vida, auxV, combate, personajeElegido);
+					vidaMaxima = vida;
+					
+					vidaEnemigo = auxVE[b, e];
+					vidaMaximaEnem = vidaEnemigo;
+					
+					narrarHistoriaInicio(personajeElegido, combate);
+					
+					//--
+					
+					Repetir
+						
+						turno = turno + 1; ataqueEnemigo = ataqueEnemigo + 1; totalDamage = 0;
+						damageBase(damage, damageEnemigo, totalDamage, atacar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem);
+						sanarBase(cura, damage, damageEnemigo, totalDamage, sanar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem, atacarExtra, durAumentador);
+						costos(costo);
+						
+						
+						Mientras ataque >= 1 & vidaEnemigo > 0 & vida > 0 Hacer
+							esTuTurno = Verdadero;
+							Repetir
+								interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy);
+								habilidadElegida = elegirHabilidad(personajeElegido, habilidad);
+								esSuficiente = costosEnergias(energia, costoEnergia, habilidadElegida);
+								c = habilidadElegida;
+								si ~esSuficiente Entonces
+									interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy);
+									errorHabilidadElegida();
+								SiNo
+									interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy);
+									mostrarHabilidad(personajeElegido, habilidad, c + 1, c + 1, Verdadero);
+									confirmar = confirmacion("¿Desea elegir esta habilidad?", Falso);
+									Si confirmar == 2 Entonces
+										esSuficiente = Falso;
+									FinSi
+								FinSi
+							Hasta Que esSuficiente
+							
+							turnoExtra = turnosExtra(turnoExtra, a, c);
+							
+							damageBase(damage, damageEnemigo, totalDamage, atacar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem);
+							
+							energia = energia - costoEnergia[c];
+							
+							costoActual = costo[a,c];
+							maximoCosto = 0; i = 0;
+							
+							ataque = ataque + turnoExtra;
+							
+							d = damage[a,c];
+							
+							
+							//----
+							
+							atacarExtra = atacarExtras(atacarExtra, durAttExtra, a, c);
+							Si durAttExtra[0] > 0 Entonces
+								costoActual = extraAttac(costoActual, atacarExtra);
+								durAttExtra[0] = durAttExtra[0] - 1;
+							FinSi
+							
+							//---
+							
+							seAumenta = aumentar(aumentador, durAumentador, seAumenta, aumento, a, c, atacarExtra);
+							si seAumenta Entonces
+								d = damageIncrease(d, aumentador, aumento);
+							FinSi
+							
+							//----
+							
+							masDefensa = aumentarDefensa(masDefensa, durMasDef, atacarExtra, aumentador, durAumentador, a, c);
+							
+							//----
+							menDefEnem = disminuirDefensasEnemigas(menDefEnem, durMenDefEnem, a, c);
+							
+							//---
+							
+							
+							
+							//-----
+							sanarBase(cura, damage, damageEnemigo, totalDamage, sanar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem, atacarExtra, durAumentador);
+							heal = cura[a,c];
+							//--
+							vidaAumentada = aumentoDeVida(vidaAumentada, atacarExtra, a, c);
+							Si vidaAumentada > 1 Entonces
+								vidaMaxima = aumentarVida(vidaMaxima, vidaAumentada);
+							FinSi
+							//-----
+							
+							defEnemy = deffE(defEnemy, masDefensaEnem, menDefEnem);
+							def = defff(def, masDefensa, menDef);
+							//--
+							Repetir
+								i = i + 1;
+								multiplicar(multiplicador);
+								si atacar[a,c] Entonces
+									dmg = d * multiplicador[a,c];
+									si defEnemy <> 0 Entonces
+										dmg = DefensaEnemigo(dmg, defEnemy);
+									FinSi
+									
+									totalDamage = totalDamage + dmg;
+									vidaEnemigo = attack (dmg, vidaEnemigo, vidaMaximaEnem, trueDmg);
+									
+								FinSi
+								//--
+								Si sanar[a,c] Entonces
+									
+									vida = healing(heal, vida, vidaMaxima, trueHeal);
+									
+								FinSi
+								
+								interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy);
+								mostrar(trueDmg, trueHeal, costoEnergia, a, c, e, atacar, sanar, i, durAttExtra, atacarExtra, aumentador, durAumentador, seAumenta, aumento, dmg, damage, d);
+								
+								maximoCosto = maximoCosto + costoActual;
+							Hasta Que maximoCosto >= 1 | vidaEnemigo <= 0 | vida <= 0
+							//--
+							si ataque > 1 Entonces
+								energia = sumaEnergia(energia, energiaMaxima, 2);
+							FinSi
+							ataque = ataque - 1;
+						FinMientras
+						
+						
+						
+						ataque = ataque + 1;
+						
+						//-----------------
+						
+						
+						//--
+						
+						
+						
+						//--
+						
+						
+						si vidaEnemigo > 0 & vida > 0 Entonces
+							
+							Mientras ataqueEnemigo >= 1 & vida > 0 & vidaEnemigo > 0 Hacer
+								esTuTurno = Falso;
+								
+								
+								defEnemy = deffE(defEnemy, masDefensaEnem, menDefEnem);
+								def = defff(def, masDefensa, menDef);
+								//Repetir
+								
+								// si atacarEnemigo[b,e,u] Entonces
+								si def <> 0 Entonces
+									dmgEnemy = Defensa(dmgEnemy, def);
+								FinSi
+								// finSi
+								//--
+								// si sanarEnemigo[b,e,u] Entonces
+								
+								// finSi
+								// Hasta Que  maximoCosto >= 1 | vida <= 0 | vidaEnemigo <= 0
+								
+								
+								ataqueEnemigo = ataqueEnemigo - 1;
+							FinMientras
+							
+							
+							
+							
+							//----------------------------------
+							si seAumenta Entonces
+								durAumentador[0] = durAumentador[0] - 1;
+								si durAumentador[0] <= 0 Entonces
+									aumentador[0] = 1;
+									durAumentador[0] = 0;
+									seAumenta = Falso;
+								FinSi
+							FinSi
+							
+							si durMasDef[0] > 0 Entonces
+								durMasDef[0] = durMasDef[0] - 1;
+								si durMasDef[0] <= 0 Entonces
+									durMasDef[0] = 0;
+									masDefensa = 0;
+								FinSi
+							FinSi
+							
+							si durMenDefEnem[0] > 0 Entonces
+								durMenDefEnem[0] = durMenDefEnem[0] - 1;
+								si durMenDefEnem[0] <= 0 Entonces
+									durMenDefEnem[0] = 0;
+									menDefEnem = 0;
+								FinSi
+							FinSi
+							
+							
+							
+							energia = sumaEnergia(energia, energiaMaxima, 1);
+						FinSi
+						
+						
+						
+						
+						
+						
+					Hasta Que vida <= 0 | vidaEnemigo <= 0 | turno >= 99
+					
+					//--
+					interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy);
+					Esperar Tecla;
+					si vida > 0 | turno < 25 Entonces
+						narrarHistoriaFin(personajeElegido, combate);
+						vida = vidaMaxima;
+					SiNo
+						combate = 7;
+					FinSi
+					
+					
+				FinPara
+				
+				Esperar Tecla;
+				
+			2:
+			3:
+			4:
+			5:
+			6:
+				
+				
+		FinSegun
+		
+	Hasta Que elegir == 6
+	
+	
+FinAlgoritmo
+
+
+
+Funcion vidaEnemigo = attack(dmg, vidaEnemigo, vidaMaximaEnem, trueDmg)
+	Definir c Como Real;
+	c = 0;
+	trueDmg[0] = dmg;
+	vidaEnemigo = vidaEnemigo - dmg;
+	c = vidaEnemigo;
+	si vidaEnemigo < 0 Entonces
+		vidaEnemigo = 0;
+		trueDmg[0] = trueDmg[0] - abs(c);
+	FinSi
+	
+	
+FinFuncion
+
+Funcion vida = healing(heal, vida, vidaMaxima, trueHeal)
+	
+	trueHeal[0] = heal;
+	vida = vida + heal;
+	si vida > vidaMaxima Entonces
+		trueHeal[0] = heal - (vida - vidaMaxima);
+		vida = vidaMaxima;
+	FinSi
+	
+	
+FinFuncion
+
+Funcion d = damageIncrease(d, aumentador, aumento)
+	Segun aumento[0] Hacer
+		
+		"*": d = d * aumentador[0];
+			
+		"^": d = d ^ aumentador[0];
+			
+		"+": d = d + aumentador[0];
+			
+		
+	FinSegun
+	
+FinFuncion
+
+Funcion costoActual = extraAttac(costoActual, atacarExtra)
+	costoActual = costoActual / atacarExtra;
+FinFuncion
+
+Funcion vidaMaxima = aumentarVida(vidaMaxima, vidaAumentada)
+	vidaMaxima = vidaMaxima * vidaAumentada;
+FinFuncion
+
+Funcion dmgEnemy = Defensa(dmgEnemy, def)
+	dmgEnemy = dmgEnemy - (def * (def)/100);
+FinFuncion
+
+Funcion dmg = DefensaEnemigo(dmg, defEnemy)
+	dmg = dmg - (dmg * (defEnemy)/100);
+FinFuncion
+
+Funcion def = defff(def, masDefensa, menDef)
+	def = masDefensa - menDef;
+	si def > 100 Entonces
+		def = 100;
+	FinSi
+	
+FinFuncion
+Funcion defEnemy = deffE(defEnemy, masDefensaEnem, menDefEnem)
+	defEnemy = masDefensaEnem - menDefEnem;
+	si defEnemy > 100 Entonces
+		defEnemy = 100;
+	FinSi
+	
+FinFuncion
+
+//----
+
+Funcion mostrar(trueDmg, trueHeal, costoEnergia, a, c, e, atacar, sanar, i, durAttExtra, atacarExtra, aumentador, durAumentador, seAumenta, aumento, dmg, damage, d)
+	
+	si atacar[a,c] Entonces
+		mostrarDamage(trueDmg);
+	FinSi
+	si sanar[a,c] Entonces
+		mostrarCura(trueHeal);
+	FinSi
+	
+	mostrarEnergia(costoEnergia, c);
+	Escribir "| Ataque x", i;
+	
+	si seAumenta & d <> damage[a,c] Entonces
+		mostrarAumento(aumentador, durAumentador, aumento, damage, a, c, d);
+		Escribir "";
+	FinSi
+	
+	Escribir "---------------------------------";
+	
+	Escribir "Presione una tecla para continuar";
+	Esperar Tecla;
+	
+FinFuncion
+
+Funcion mostrarDamage(trueDmg)
+	
+	Escribir "| Daño causado: ", trueDmg[0], " " Sin Saltar;
+	
+FinFuncion
+Funcion mostrarAumento(aumentador, durAumentador, aumento, damage, a, c, d)
+	Definir b Como Real;
+	b = ((d - damage[a,c]) / damage[a,c]) * 100;
+	
+	Escribir "| Daño +", b, "% durante ", durAumentador[0], " r " Sin Saltar;
+	
+FinFuncion
+Funcion mostrarCura(trueHeal)
+	
+	Escribir "| Vida recuperada: ", trueHeal[0], " "  Sin Saltar;
+	
+FinFuncion
+Funcion mostrarEnergia(costoEnergia, c)
+	Escribir "| Energia consumida: ", costoEnergia[c], " " Sin Saltar;
+	
+FinFuncion
+//---- Energia
+
+Funcion esSuficiente = costosEnergias(energia, costoEnergia, habilidadElegida)
+	Definir esSuficiente Como Logico;
+	
+	si costoEnergia[habilidadElegida] <= energia Entonces
+		esSuficiente = Verdadero;
+	sino
+		esSuficiente = Falso;
+	FinSi
+	
+FinFuncion
+
+Funcion energia = sumaEnergia(energia, energiaMaxima, e)
+	
+	Segun e Hacer
+		1: energia = energia + 25;
+		2: energia = energia + 5;
+			
+	FinSegun
+	si energia > 100 Entonces
+		energia = 100;
+	FinSi
+	
+FinFuncion
+
+
+//------------------------------------------------------------------------ INTERFAZ ---------------------------------------------------------------------------
+
+Funcion interfaz(vida, vidaMaxima, vidaEnemigo, vidaMaximaEnem, b, combate, enemigo, personaje, a, e, personajeElegido, turno, esTuTurno, energia, energiaMaxima, def, defEnemy)
+	Borrar Pantalla;
+	Definir i, u, v, vE Como Entero;
+	Definir l Como Real;
+	Dimension v[1], vE[1];
+	redondearVida(vida, vidaMaxima, VidaEnemigo, vidaMaximaEnem, v, vE);
+	u = 0;
+	l = turno;
+	Mientras l > 0 Hacer
+		l = trunc(l/10);
+		u = u + 1;
+	FinMientras
+	si u == 0 Entonces
+		u = 1;
+	FinSi
+	
+	Escribir "_______________________________________________________________________________________________________________";
+	Escribir "|                                                  /Combate\                                                  |";
+	Escribir "|-------------------------------------------------/    ",combate + 1, "    \-------------------------------------------------|";
+	Escribir "| .--------------------------------------------. |___________| .--------------------------------------------. |";
+	Escribir "| | Tú: ", personaje[personajeElegido], Sin Saltar;
+	Para i = Longitud(personaje[personajeElegido]) + Longitud("_Tú:_") Hasta 43 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+    Escribir "| | Ronda: ", turno Sin Saltar;
+	Para i = u Hasta 2 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+	Escribir "| | Enemigo: ", enemigo[b,e] Sin Saltar;
+	Para i = Longitud(enemigo[b,e]) + Longitud("_Enemigo:_") Hasta 43 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+	Escribir "| |";
+	//-- Vida
+	Escribir "| | Vida |" Sin Saltar;
+	u = 0;
+	Para i = 1 Hasta v[0] Con Paso vidaMaxima * 5/100 Hacer
+		Escribir "=" Sin Saltar;
+		u = u + 1;
+	FinPara
+	Escribir "> ", v[0] Sin Saltar;
+	l = v[0];
+	Mientras l > 0 Hacer
+		l = trunc(l/10);
+		u = u + 1;
+	FinMientras
+	si u == 0 Entonces
+		u = 1;
+	FinSi
+	si def == 0 Entonces
+		Para i = u + Longitud("_Vida_|>_") Hasta 43 Hacer
+			Escribir " " Sin Saltar;
+		FinPara
+	sino
+		si def > 0 Entonces
+			Escribir " +", def, "% Def" Sin Saltar;
+			l = def;
+			Mientras l > 0 Hacer
+				l = trunc(l/10);
+				u = u + 1;
+			FinMientras
+			si u == 0 Entonces
+				u = 1;
+			FinSi
+			
+			Para i = u + Longitud("_Vida_|>___%_Def") Hasta 43 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+		sino
+			si def < 0 Entonces
+				Escribir " ", def, "% Def" Sin Saltar;
+				l = abs(def);
+				Mientras l > 0 Hacer
+					l = trunc(l/10);
+					u = u + 1;
+				FinMientras
+				si u == 0 Entonces
+					u = 1;
+				FinSi
+				
+				Para i = u + Longitud("_Vida_|>___%_Def") Hasta 43 Hacer
+					Escribir " " Sin Saltar;
+				FinPara
+			FinSi
+		FinSi
+		
+		
+	FinSi
+	
+	Escribir "| |-----------| |" Sin Saltar;
+	//-- Vida Enemigo
+	Escribir " Vida |" Sin Saltar;
+	u = 0;
+	Para i = 1 Hasta vE[0] Con Paso vidaMaximaEnem * 5/100 Hacer
+		Escribir "=" Sin Saltar;
+		u = u + 1;
+	FinPara
+	Escribir "> ", vE[0] Sin Saltar;
+	l = vE[0];
+	Mientras l > 0 Hacer
+		l = trunc(l/10);
+		u = u + 1;
+	FinMientras
+	si u == 0 Entonces
+		u = 1;
+	FinSi
+	si defEnemy == 0 Entonces
+		Para i = u + Longitud("_Vida_|>_") Hasta 43 Hacer
+			Escribir " " Sin Saltar;
+		FinPara
+	SiNo
+		si defEnemy > 0 Entonces
+			Escribir " +", defEnemy, "% Def" Sin Saltar;
+			l = defEnemy;
+			Mientras l > 0 Hacer
+				l = trunc(l/10);
+				u = u + 1;
+			FinMientras
+			si u == 0 Entonces
+				u = 1;
+			FinSi
+			
+			Para i = u + Longitud("_Vida_|>___%_Def") Hasta 43 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+			
+		SiNo
+			
+			si defEnemy < 0 Entonces
+				Escribir " ", defEnemy, "% Def" Sin Saltar;
+				l = abs(defEnemy);
+				Mientras l > 0 Hacer
+					l = trunc(l/10);
+					u = u + 1;
+				FinMientras
+				si u == 0 Entonces
+					u = 1;
+				FinSi
+				
+				Para i = u + Longitud("_Vida_|>___%_Def") Hasta 43 Hacer
+					Escribir " " Sin Saltar;
+				FinPara
+			FinSi
+			
+		FinSi
+	FinSi
+	
+	Escribir "| |";
+	//--- Energía
+	Escribir "| | Engy |" Sin Saltar;
+	u = 0;
+	Para i = 1 Hasta energia Con Paso energiaMaxima * 5/100 Hacer
+		Escribir "=" Sin Saltar;
+		u = u + 1;
+	FinPara
+	Escribir "> ", energia Sin Saltar;
+	l = energia;
+	Mientras l > 0 Hacer
+		l = trunc(l/10);
+		u = u + 1;
+	FinMientras
+	si u == 0 Entonces
+		u = 1;
+	FinSi
+	Para i = u  + Longitud("_Engy_|>_") Hasta 43 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+	//---
+	Escribir "| |" Sin Saltar;
+	Si esTuTurno & vida > 0 & vidaEnemigo > 0 Entonces
+		Escribir "    Tu     " Sin Saltar;
+		
+	SiNo
+		Si ~esTuTurno & vida > 0 & vidaEnemigo > 0 Entonces
+			Escribir "   Turno   " Sin Saltar;
+			
+		SiNo
+			si vidaEnemigo <= 0 & vida > 0 Entonces
+				Escribir "    Has    " Sin Saltar;
+				
+			SiNo
+				si vida <= 0 Entonces
+					Escribir "    Has    " Sin Saltar;
+					
+				FinSi
+				
+			FinSi
+			
+		FinSi
+		
+	FinSi
+	Escribir "| |                                            | |";
+	Escribir "| |                                            | |" Sin Saltar;
+	Si esTuTurno & vida > 0 & vidaEnemigo > 0 Entonces
+		Escribir "   turno   " Sin Saltar;
+		
+	SiNo
+		Si ~esTuTurno & vida > 0 & vidaEnemigo > 0 Entonces
+			Escribir "  enemigo  " Sin Saltar;
+			
+		SiNo
+			si vidaEnemigo <= 0 & vida > 0 Entonces
+				Escribir "  ganado   " Sin Saltar;
+				
+			SiNo
+				si vida <= 0 Entonces
+					Escribir "  perdido  " Sin Saltar;
+					
+				FinSi
+				        
+			FinSi
+		FinSi
+		
+	FinSi
+	Escribir "| |                                            | |";
+	Escribir "| |____________________________________________| |___________| |____________________________________________| |";
+	Escribir "|_____________________________________________________________________________________________________________|";
+	
+	
+	
+FinFuncion
+
+Funcion redondearVida(vida, vidaMaxima, VidaEnemigo, vidaMaximaEnem, v, vE)
+	Definir ax, axVm Como Entero;
+	ax = trunc(vida);
+	axVm = trunc(vidaMaxima);
+	si axVm < vidaMaxima Entonces
+		axVm = axVm + 1;
+	FinSi
+	si vida == vidaMaxima Entonces
+		v[0] = axVm;
+	SiNo
+		si vida <= 0 Entonces
+			v[0] = 0;
+		SiNo
+			si vida > 0  | vida < vidaMaxima Entonces
+				v[0] = ax + 1;
+			FinSi
+		FinSi
+		
+	FinSi
+	
+	ax = trunc(vidaEnemigo);
+	axVm = trunc(vidaMaximaEnem);
+	si axVm < vidaMaximaEnem Entonces
+		axVm = axVm + 1;
+	FinSi
+	si vidaEnemigo == vidaMaximaEnem Entonces
+		vE[0] = axVm;
+	SiNo
+		si vidaEnemigo <= 0 Entonces
+			vE[0] = 0;
+		SiNo
+			si vidaEnemigo > 0  | vidaEnemigo < vidaMaximaEnem Entonces
+				vE[0] = ax + 1;
+			FinSi
+		FinSi
+		
+	FinSi
+	
+FinFuncion
+
+Funcion habilidadElegida = elegirHabilidad(personajeElegido, habilidad)
+	Definir seleccionar Como Caracter;
+	Definir habilidadElegida Como Entero;
+	mostrarHabilidad(personajeElegido, habilidad, 1, 3, Verdadero);
+	Escribir "Elegir Habildad:";
+	leer seleccionar;
+	
+	Segun seleccionar Hacer
+		
+		"1": habilidadElegida = 0;
+		"2": habilidadElegida = 1;
+		"3": habilidadElegida = 2;
+			
+		De Otro Modo:
+			
+			habilidadElegida = 0;
+			
+	FinSegun
+	
+FinFuncion
+
+Funcion errorHabilidadElegida()
+	Escribir "_______________________________________________________________________________________________________________";
+	Escribir "|                        EL COSTO DE ENERGíA DE LA HABILIDAD SUPERA TU ENERGíA ACTUAL.                        |";
+	Escribir "|                            Presiona una tecla para volver a elegir una habilidad                            |";
+	Escribir "---------------------------------------------------------------------------------------------------------------";
+	Esperar Tecla;
+FinFuncion
+
+//------------------------------------------------------------------------- VIDAS -----------------------------------------------------------------------------
+
+Funcion vida = vidas(vida, auxV, combate, personajeElegido)
+	Segun combate Hacer
+		0: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 0/100);
+		1: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 10/100);
+		2: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 25/100);
+		3: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 45/100);
+		4: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 50/100);
+		5: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 60/100);
+		6: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 75/100);
+		7: vida = auxV[personajeElegido] + (auxV[personajeElegido] * 100/100);
+			
+	FinSegun
+FinFuncion
+
+//---- Vida ENEMIGOS ----
+
+//   enemigo[nivel de combate, personaje o aleatorio]
+Funcion vidasEnemigos(vidaMaximaEnem, vidaEnemigo, enemigoActual)
+	
+	
+	
+FinFuncion
+
+//----------------------------------------------------------------- PERSONAJES ELEGIDOS -------------------------------------------------------------------
+
+Funcion personajeElegido = personajeSeleccionado(seleccionar)
+	Definir personajeElegido Como Entero;
+	Segun seleccionar Hacer
+		"1": personajeElegido = 1;
+		"2": personajeElegido = 2;
+		"3": personajeElegido = 3;
+		"4": personajeElegido = 4;
+		"5": personajeElegido = 5;
+		"6": personajeElegido = 6;
+		"7": personajeElegido = 7;
+		"8": personajeElegido = 8;
+			
+			
+			
+		De Otro Modo:
+			
+			personajeElegido = Aleatorio(1,8);
+			
+	FinSegun
+	
+	personajeElegido = personajeElegido - 1;
+	
+FinFuncion
+
+//--------------------------------------------------------------- NARRACIONES DE HISTORIA ----------------------------------------------------------------------------
+
+Funcion narrarHistoriaInicio(personajeElegido, combate)
+	Borrar Pantalla;
+	Segun personajeElegido Hacer
+		0:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		1:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		2:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		3:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		4:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		5:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		6:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		7:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+			
+	FinSegun
+	
+FinFuncion
+
+Funcion narrarHistoriaFin(personajeElegido, combate)
+	Borrar Pantalla;
+	Segun personajeElegido Hacer
+		0:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		1:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		2:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		3:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		4:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		5:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		6:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+		7:
+			Segun combate Hacer
+				1:
+				2:
+				3:
+				4:
+				5:
+				6:
+				7:
+				8:
+					
+			FinSegun
+			
+	FinSegun
+	
+FinFuncion
+
+
+Funcion introduccionHistoria(personajeElegido)
+	Borrar Pantalla;
+	Segun personajeElegido Hacer
+		0:
+		1:
+		2:
+		3:
+		4:
+		5:
+		6:
+		7:
+			
+	FinSegun
+FinFuncion
+
+//--------------------------------------------------------- DESCRIPCIONES Y CONSEJOS --------------------------------------------------------------
+
+Funcion consejos()
+	Borrar Pantalla;
+	Definir consejo Como Entero;
+	consejo = azar(9);
+	
+	Escribir "";
+	Escribir "";
+	Escribir         "-----------------------------------------------------------------------------------------";
+	Escribir         "|                                        Consjeo                                        |";
+	Escribir         "|---------------------------------------------------------------------------------------|";
+	Escribir         "|                                                                                       |";
+	segun consejo Hacer
+		0: 
+			Escribir "|                Mientras más avanzas los enemigos se hacen mas fuertes.                |";
+			Escribir "|                           ¡Piensa primero antes de atacar!                            |";
+		1:
+			Escribir "|     En el modo libre te puede tocar cualquier enemigo según el nivel del combate.     |";
+			Escribir "|                    Tener una estratégia en concreto no te servirá.                    |";
+		2:
+			Escribir "|                         Fénix tiene una muy alta regeneración.                        |";
+			Escribir "|        Intenta usar ataques que causen mucho daño o que disminuyan su curación.       |";
+		3:
+			Escribir "|             Knight es bueno contra enemigos que causan efectos negativos.             |";
+			Escribir "|                      Úsalo si sabes los enemigos que te tocarán.                      |";
+		4:
+			Escribir "|                     Al nivel 4 y 8 del combate siempre hay Bosses.                    |";
+			Escribir "|                Son los que te dan más puntaje para tu puntuación final.               |";
+		5:
+			Escribir "|    Al final del combate se te da un puntaje. Este depende de la vida que te qutan,    |";
+			Escribir "|     cuantos enemigos hayas vencido, las rondas que tardas y el nivel del combate.     |";
+		6:
+			Escribir "|                        El ataque de Commander hace muy poco daño.                     |";
+			Escribir "|           Pero con su especial puede llegar a hacer el mayor daño del juego.          |";
+		7:
+			Escribir "|   No uses ataques con mucho daño si quedas atrapado en las espinas de Madre Planta.   |";
+			Escribir "|                  Estas hacen sangrado dependiendo del daño que hagas.                 |";
+		8:
+			Escribir "|      Los ataques de nieve causan poco daño pero disminuyen la fuerza del enemigo.     |";
+			Escribir "|  Cuidado al luchar contra Monstruo De Nieve, ya que puede disminuir mucho tu fuerza.  |";
+		9:
+			Escribir "|                                ¿Te cuento un secreto?                                 |";
+			Escribir "|                 El creador nunca ganó en la primera versión del juego                 |";
+		
+		
+	FinSegun
+	Escribir         "|                                                                                       |";
+	Escribir         "-----------------------------------------------------------------------------------------";
+	Escribir "";
+	Escribir "Cargando partida" Sin Saltar;
+	Esperar 1 Segundos;
+	Escribir "." Sin Saltar;
+	Esperar 1 Segundos;
+	Escribir "." Sin Saltar;
+	Esperar 1 Segundos;
+	Escribir ".";
+	Esperar 1 Segundos;
+	
+FinFuncion
+
+Funcion descrHistoria(personajeElegido, habilidad)
+	Borrar Pantalla;
+	
+	Escribir "_________________________";
+	Escribir "| Fragmento de historia |";
+	
+	Segun personajeElegido hacer
+		0:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Perdido en el bosque, buscarás la manera de escapar antes de que caiga la noche,       |";
+			Escribir "| mientras combates contra enemigos que se cruzan en tu camino y descubres aquello que   |";
+			Escribir "| te llevó a ese lugar.                                                                  |";
+			Escribir "==========================================================================================";
+			
+		1:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Quedaste atrapado en la dimensión del tiempo, y la unica manera de volver a tu linea   |";
+			Escribir "| temporal es derrotar a la Entidad Del Tiempo. Para ello tendrás que cruzar diferentes  |";
+			Escribir "| mundos y luchar contra anomalías temporales.                                           |";
+			Escribir "==========================================================================================";
+			
+		2:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Según la profecia, eres el elegido, el hijo de la Diosa Del Sol. Como elegido, naciste |";
+			Escribir "| para derrotar al Dios De La Luna, que ha mantenido al mundo sumergido en la oscuridad  |";
+			Escribir "| eterna, pero ten cuidado, aunque seas casi dios no eres inmortal.                      |";
+			Escribir "==========================================================================================";
+			
+		3:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Para poder convertirte en la nueva Maestro Mago, debes encontrar y derrotar al antiguo |";
+			Escribir "| Maestro Mago, solo así podrás tomar su titulo. En el camino, deberás adentrarte al     |";
+			Escribir "| Bosque Encantado y derrotar a aquellas criaturas magicas que allí habitan.             |";
+			Escribir "==========================================================================================";
+			
+		4:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Un Dragón ataca el reino. La Reina, El Rey y el resto de la familia real están siendo  |";
+			Escribir "| controlados por su poder mental, y tu deber como el caballero real es matar al dragón  |";
+			Escribir "| y regresar el reino a la normalidad. TEN CUIDADO DE NO HERIR A LOS INOCENTES.          |";
+			Escribir "==========================================================================================";
+			
+		5:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Te convertiste en el nuevo guardian de las almas, tu trabajo es guiarlas al otro mundo |";
+			Escribir "| y ayudarlas a descanzar. Pero hay un mal que está atando a las almas al mundo humano y |";
+			Escribir "| las ha corrompido. Ya sabes lo que debes hacer, desaste del mal y libera a las almas.  |";
+			Escribir "==========================================================================================";
+			
+		6:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Eres miembro de una secta que se dedica a hacer rituales demoniacos para obtener poder |";
+			Escribir "| riquezas y suerte. Pero tú quieres aún más, deseas convertirte en la persona más       |";
+			Escribir "| poderosa de este y todos los mundos, para ello debes invocar al Rey De Los Demonio,    |";
+			Escribir "| matarlo y beber su sangre.                                                             |";
+			Escribir "==========================================================================================";
+			
+		7:
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Como conejillo de indias de un cientifico loco, te rebelas e intentas buscar la manera |";
+			Escribir "| de escapar de su laboratorio, en el camino te das cuenta de todos los actos crueles e  | ";
+			Escribir "| inmorales que ha hecho. Queda en tus manos darle su merecido.                          |";
+			Escribir "==========================================================================================";
+			
+			
+	FinSegun
+FinFuncion
+
+Funcion descrHabilidad(personajeElegido, habilidad)
+	Segun personajeElegido Hacer
+		0:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Das un solo ataque que causa [15.55] de daño al enemigo.                               |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Devuelves el próximo ataque que recibas del enemigo con el doble de daño.              |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Causas [10.55] de daño al enemigo, pero puede golpear desde 2 a 6 veces.               |";
+			Escribir "==========================================================================================";
+			
+			
+		1:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Golpeas al enemigo una sola vez, causando [1.23456789] de daño.                        |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Te vuelves intangible durante esa ronda, los enemigos no te pueden causar daño.        |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Al activar Cuerpo Dividido, las proximas 2 rondas atacas desde 4 a 8 veces. Y el daño  |";
+			Escribir "| de Golpe De Bastón es elevado a las veces que atacarás (1.23456789^[4 a 8]).           |";
+			Escribir "==========================================================================================";
+		2:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Atacas rápidamente al enemigo, causando [9.3] de daño, permitiendote atacar otra vez   |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Daña al enemigo con un rayo de luz con un daño base de [0.3], que puede hacer desde    | ";
+			Escribir "| [18.9] hasta [27.9] de daño máximo.                                                    |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Te da 2 turnos extra, y aumenta tu posibilidad de esquivar ataques enemigos.           |";
+			Escribir "==========================================================================================";
+		3:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Disparas una Bola De Fuego que causa [12.25] de daño, incendia al enemigo durante 10   |";
+			Escribir "| turnos con [1.225] de daño por cada turno y disminuyes su sanación un 20 % mientras    |";
+			Escribir "| están incendiados.                                                                     |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Te curas [30] puntos de vida.                                                          |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Le haces [40] de daño al enemigo y lo electrocutas haciendole [2.5] de daño durante 4  |";
+			Escribir "| turnos. El enemigo electrocutado tiene una miníma posibilidad de ser aturdido durante  |";
+			Escribir "| los trunos que dure el efecto.                                                         |";
+			Escribir "==========================================================================================";
+		4:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Golpeas al enemigo haciendole [7.5] de daño y le causas sangrado por 2 turnos con [5]   |";
+			Escribir "| de daño por cada turno que dure el efecto.                                             |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Incendias al enemigo haciendole [6.6] de daño durante 4 turnos y lo debilitas un 25 %  |";
+			Escribir "| mientas esté incendiado.                                                               | ";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Te quita todos los efectos negativos que tengas y te hace inmune a estos durante 3     |";
+			Escribir "| rondas. Tu defensa aumenta en un 70 % mientras Inmunidad está activa.                  |";
+			Escribir "==========================================================================================";
+		5:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Golpeas al enemigo haciendole [9.99] de daño, ignorando la defensa del enemigo y tu    |";
+			Escribir "| debilidad.                                                                             |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Le haces daño al enemigo equivalente al 10 % de la vida actual que tenga y al 10 % de  |";
+			Escribir "| la vida que te falte. El daño causado se convierte en salud para ti.                   |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Algunas almas aparecen para ayudarte, cada alma aumenta en un 10 % tu defensa y daño,  |";
+			Escribir "| y te curan un 2 % de tu vida máxima. Las almas que pueden aparecer van desde 1 a 9.    |";
+			Escribir "| Cada turno después del siguiente, las almas empiezan a disminuir en 1.                 |";
+			Escribir "==========================================================================================";
+		6:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Lanzas 3 púas las cuales causan [3.1] de daño. Cada una tiene un 50 % de causar daño   |";
+			Escribir "| crítico (100 % más de daño) al golpear.                                                 |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Cada vez que uses Aterrorizar disminuyes la resistemcia del enemigo en 4 % y su ataque |";
+			Escribir "| en 5 %. Esta habilidad se puede acumular hasta 5 veces. Los efectos no desaparecen     |";
+			Escribir "| hasta que el enemigo use alguna habilidad para Eliminarlos.                            |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Invocas a un Titan Demoníaco que dispara un lazer gigante por boca, haciendo desde     |";
+			Escribir "| [25.5] a [50.5] de daño que no se puede curar.                                         |";
+			Escribir "==========================================================================================";
+		7:
+			mostrarHabilidad(personajeElegido, habilidad, 1, 1, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Le haces [11.11] de daño al enemigo y le quitas todos los efectos positivos que tenga  |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 2, 2, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Cada vez que usas Mejorar aumentas tu vida máxima un 2 % y tu ataque un 5 % de forma   |";
+			Escribir "| permanente. Estos efectos no se pueden eliminar hasta que acabe el combate.            |";
+			Escribir "| Esta habilidad tambien te cura un 5 % de tu vida máxima.                               |";
+			Escribir "==========================================================================================";
+			mostrarHabilidad(personajeElegido, habilidad, 3, 3, Falso);
+			Escribir "|-----------------------------------------------------------------------------------------";
+			Escribir "| Invocas un meca con [100] puntos de vida y cada turno pierde [10]. Al perder la vida   |";
+			Escribir "| por completo el Meca hace una exploción que causa [50] de daño al enemigo y [10] a ti. |";
+			Escribir "| Mientras estés en el meca Desarmar hace el doble de daño.                              |";
+			Escribir "==========================================================================================";
+			
+	FinSegun
+	
+FinFuncion
+
+Funcion descripciones(personaje, personajeElegido, auxV, habilidad, especie, elemento)
+	Borrar Pantalla;
+	Definir i Como Entero;
+	
+	Escribir "________________________________________________________________________";
+	Escribir "| Personaje: ", personaje[personajeElegido] Sin Saltar;
+	Para i = Longitud(personaje[personajeElegido]) + Longitud("_Personaje:_") Hasta 25 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+	Escribir "| Especie: ", especie[personajeElegido] Sin Saltar;
+	Para i = Longitud(especie[personajeElegido]) + Longitud("_Especie:_") Hasta 25 Hacer
+		Escribir " " Sin Saltar ;
+	FinPara
+	Escribir "| Vida: ", auxV[personajeElegido] Sin Saltar;
+	Para i = 3 + Longitud("_Vida:_") Hasta 15 Hacer
+		Escribir " " Sin Saltar;
+	FinPara
+	Escribir "|";
+	Escribir "________________________________________________________________________";
+	descrHabilidad(personajeElegido, habilidad);
+	
+FinFuncion
+
+//------------------------------------------------------------------------ MOSTRAR HABILIDADES ---------------------------------------------------------------
+
+Funcion mostrarHabilidad(personajeElegido, habilidad, d, a, esHorizontal)
+	Definir i, j, costoEnergia, u, l Como Entero;
+	Definir tipoHabilidad Como Caracter;
+	d = d - 1;
+	a = a - 1;
+	
+	si ~esHorizontal Entonces
+		Para i = d Hasta a Hacer
+			Segun i Hacer
+				0: tipoHabilidad = " Ataque: ";
+				1: tipoHabilidad = " Habilidad: ";
+				2: tipoHabilidad = " Especial: ";
+					
+			FinSegun
+			Escribir "_____________________________________";
+			Escribir "| ", i + 1,tipoHabilidad, habilidad[personajeElegido, i] Sin Saltar;
+			para j = Longitud(tipoHabilidad) + Longitud(habilidad[personajeElegido, i]) Hasta 32 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+			Escribir "|";
+			
+			Segun i Hacer
+				0: costoEnergia = 0;
+				1: costoEnergia = 10;
+				2: costoEnergia = 100;
+					
+			FinSegun
+			
+			l = costoEnergia;
+			u = 0;
+			Mientras l > 0 Hacer
+				l = trunc(l/10);
+				u = u + 1;
+			FinMientras
+			si u == 0 Entonces
+				u = 1;
+			FinSi
+			
+			Escribir "| Costo de Energía: ", costoEnergia Sin Saltar;
+			para j = Longitud("_Costo_de_Energía:_") + u Hasta 34 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+			Escribir "|";
+			
+			
+			
+		FinPara
+	FinSi
+	
+	si esHorizontal Entonces
+		Para i = d Hasta a Hacer
+			Escribir "_____________________________________" Sin Saltar;
+		FinPara
+		Escribir "";
+		Para i = d Hasta a Hacer
+			Segun i Hacer
+				0: tipoHabilidad = " Ataque: ";
+				1: tipoHabilidad = " Habilidad: ";
+				2: tipoHabilidad = " Especial: ";
+					
+			FinSegun
+			Escribir "| ", i + 1,tipoHabilidad, habilidad[personajeElegido, i] Sin Saltar;
+			para j = Longitud(tipoHabilidad) + Longitud(habilidad[personajeElegido, i]) Hasta 32 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+			Escribir "|" Sin Saltar;
+			
+		FinPara
+		Escribir "";
+		para i = d Hasta a Hacer
+			Segun i Hacer
+				0: costoEnergia = 0;
+				1: costoEnergia = 10;
+				2: costoEnergia = 100;
+					
+			FinSegun
+			
+			l = costoEnergia;
+			u = 0;
+			Mientras l > 0 Hacer
+				l = trunc(l/10);
+				u = u + 1;
+			FinMientras
+			si u == 0 Entonces
+				u = 1;
+			FinSi
+			
+			Escribir "| Costo de Energía: ", costoEnergia Sin Saltar;
+			para j = Longitud("_Costo_de_Energía:_") + u Hasta 34 Hacer
+				Escribir " " Sin Saltar;
+			FinPara
+			Escribir "|" Sin Saltar;
+		FinPara
+		Escribir "";
+		Para i = d Hasta a Hacer
+			Escribir "-------------------------------------" Sin Saltar;
+		FinPara
+		Escribir "";
+	FinSi
+	
+	
+FinFuncion
+
+//----------------------------------------------------------------------- CONFIRMACIONES ----------------------------------------------------------------
+
+Funcion confirmar = confirmacion(mensaje, esIncorrecta)
+	Definir confirmar Como Entero;
+	Definir seleccionar Como Caracter;
+	Escribir mensaje;
+	
+	Escribir "1. Si / 2. No" ;
+	Leer seleccionar;
+	Segun seleccionar Hacer
+		"1": confirmar = 1;
+		"2": confirmar = 2;
+		De Otro Modo:
+			confirmar = 3;
+	FinSegun
+	si esIncorrecta Entonces
+		si confirmar == 3 Entonces
+			Escribir "Opción incorrecta. Presione una tecla para volver a elegir";
+			Esperar Tecla;
+		FinSi
+	SiNo
+		si confirmar == 3 Entonces
+			confirmar = 1;
+		FinSi
+	FinSi
+	
+	
+	
+FinFuncion
+
+//--------------------------------------------------------------------- MENÚ DE ELECCIÓN -----------------------------------------------------------
+
+Funcion menuEleccionPersonaje(mensaje)
+	Borrar Pantalla;
+	Escribir "_______________________________________________________________________________________________________________";
+	Escribir "|                                          Selecciona a tu personaje                                          |";
+	Escribir "-------------------------------------------------------|-------------------------------------------------------";
+	Escribir "|-----------| Vida         |=========================> | |-----------| Vida         |===================>";
+	Escribir "|   Tank    | Ataque       |=====================>     | | Commander | Ataque       |======>";
+	Escribir "|     1     | Defensa      |============>              | |     2     | Defensa      |=================>";
+	Escribir "|-----------| Velocidad    |====>                      | |-----------| Velocidad    |===========> ";
+	Escribir "-------------------------------------------------------|------------------------------------------------------";
+	Escribir "|-----------| Vida         |=========>                 | |-----------| Vida         |================>";
+	Escribir "| Sprinter  | Ataque       |=================>         | | Magician  | Ataque       |===================>";
+	Escribir "|     3     | Defensa      |=======>                   | |     4     | Defensa      |================>";
+	Escribir "|-----------| Velocidad    |=========================> | |-----------| Velocidad    |======> ";
+	Escribir "-------------------------------------------------------|------------------------------------------------------";
+	Escribir "|-----------| Vida         |==============>            | |-----------| Vida         |======================>";
+	Escribir "|  Knight   | Ataque       |=====================>     | | Guardian  | Ataque       |============>";
+	Escribir "|     5     | Defensa      |======================>    | |     6     | Defensa      |=================>";
+	Escribir "|-----------| Velocidad    |========>                  | |-----------| Velocidad    |===> ";
+	Escribir "-------------------------------------------------------|------------------------------------------------------";
+	Escribir "|-----------| Vida         |===========>               | |-----------| Vida         |==============>";
+	Escribir "| Sectarian | Ataque       |===================>       | | Engineer  | Ataque       |=======================>";
+	Escribir "|     7     | Defensa      |===================>       | |     8     | Defensa      |=====================>";
+	Escribir "|-----------| Velocidad    |============>              | |-----------| Velocidad    |====> ";
+	Escribir "-------------------------------------------------------|------------------------------------------------------";
+	Escribir "| Aleatrorio: Cualquier otra tecla |";
+	Escribir "------------------------------------";
+	Escribir mensaje;
+	
+FinFuncion
+
+Funcion seleccionar = elegirPersonajeHistoria(personaje, auxV, habilidad, especie, elemento)
+	Definir seleccionar, mensaje Como Caracter;
+	Definir personajeElegido, confirmar Como Entero;
+	Repetir
+		
+		menuEleccionPersonaje("Elija que su personaje a usar:");
+		Leer seleccionar;
+		personajeElegido = personajeSeleccionado(seleccionar);
+		
+		Repetir
+			
+			descripciones(personaje, personajeElegido, auxV, habilidad, especie, elemento);
+			confirmar = confirmacion("¿En serio desea elegir a este personaje? : " + personaje[personajeElegido], Verdadero);
+			
+			si confirmar == 1 Entonces
+				
+				Repetir
+					
+					descrHistoria(personajeElegido, habilidad);
+					confirmar = confirmacion("¿Desea continuar?", Verdadero);
+					
+				Hasta Que confirmar == 1 | confirmar == 2
+				
+			FinSi
+			
+		Hasta Que confirmar == 1 | confirmar == 2
+		
+		
+	Hasta Que confirmar == 1
+	
+	consejos();
+	
+	
+FinFuncion
+
+//------------------------------------------------------- NOMBRES DE PERSONAJES Y ENEMIGOS -----------------------------------------------------------
+
+Funcion personajes(personaje)
+	personaje[0] = "Tank";
+	//-------------------------
+	personaje[1] = "Commander";
+	//-------------------------
+	personaje[2] = "Sprinter";
+	//-------------------------
+	personaje[3] = "Magician";
+	//-------------------------
+	personaje[4] = "Knight";
+	//-------------------------
+	personaje[5] = "Guardian";
+	//-------------------------
+	personaje[6] = "Sectarian";
+	//-------------------------
+	personaje[7] = "Engineer";
+FinFuncion
+
+//---- NOMBRE ENEMIGOS ----
+
+//   enemigo[nivel de combate, personaje o aleatorio]
+Funcion enemigos(enemigo)
+	//----- NIVEL 1 ----
+	enemigo[0,0] = "Bestia";
+	enemigo[0,1] = "Reloj Revivido";
+	enemigo[0,2] = "Criatura Oscura";
+	enemigo[0,3] = "Slime";
+	enemigo[0,4] = "Saqueador";
+	enemigo[0,5] = "Alma Perdida";
+	enemigo[0,6] = "Zombie";
+	enemigo[0,7] = "R.D.A";
+	//----- NIVEL 2 ----
+	enemigo[1,0] = "Serpiente";
+	enemigo[1,1] = "Newton";
+	enemigo[1,2] = "Sufrimiento";
+	enemigo[1,3] = "Planta Devoradora";
+	enemigo[1,4] = "Verdugo";
+	enemigo[1,5] = "Humano Poseído";
+	enemigo[1,6] = "Esqueleto";
+	enemigo[1,7] = "Espécimen 21";
+	//----- NIVEL 3 ----
+	enemigo[2,0] = "Golem De Pedra";
+	enemigo[2,1] = "Time-Rex";
+	enemigo[2,2] = "Sombra Maligna";
+	enemigo[2,3] = "Alce Mágico";
+	enemigo[2,4] = "Bufón";
+	enemigo[2,5] = "Medium";
+	enemigo[2,6] = "Vampiro";
+	enemigo[2,7] = "Proyecto Eliz";
+	//----- NIVEL 4 ---- Boss
+	enemigo[3,0] = "Bestia Gigante";
+	enemigo[3,1] = "Guardian Del Tiempo";
+	enemigo[3,2] = "Principe De Las Sombras";
+	enemigo[3,3] = "Bruja";
+	enemigo[3,4] = "Rey";
+	enemigo[3,5] = "Fantasma Antiguo";
+	enemigo[3,6] = "La Parca";
+	enemigo[3,7] = "Científico Loco";
+	//----- NIVEL 5 ----
+	enemigo[4,0] = "Cazador";
+	enemigo[4,1] = "Baby Commander";
+	enemigo[4,2] = "Caballero Oscuro";
+	enemigo[4,3] = "Slime Gigante";
+	enemigo[4,4] = "Clérigo";
+	enemigo[4,5] = "Casa Maldita";
+	enemigo[4,6] = "Chupacabras";
+	enemigo[4,7] = "Experimento Medusa";
+	//----- NIVEL 6 ----
+	enemigo[5,0] = "Toxic King";
+	enemigo[5,1] = "Glitch";
+	enemigo[5,2] = "Imitador";
+	enemigo[5,3] = "Fénix";
+	enemigo[5,4] = "Gran Caballero Real";
+	enemigo[5,5] = "Mujer Del Espejo";
+	enemigo[5,6] = "Cerbero";
+	enemigo[5,7] = "R.P.P";
+	//----- NIVEL 7 ----
+	enemigo[6,0] = "Madre Planta";
+	enemigo[6,1] = "C.Milos";
+	enemigo[6,2] = "Pesadilla";
+	enemigo[6,3] = "Monstruo De Nieve";
+	enemigo[6,4] = "Reina";
+	enemigo[6,5] = "El Maligno";
+	enemigo[6,6] = "Guardián Del Inframundo";
+	enemigo[6,7] = "H4R2";
+	//----- NIVEL 8 ---- Boss
+	enemigo[7,0] = "Cambia Formas";
+	enemigo[7,1] = "Entidad Del Tiempo";
+	enemigo[7,2] = "Dios De La Luna";
+	enemigo[7,3] = "Maestro Mago";
+	enemigo[7,4] = "Dragón";
+	enemigo[7,5] = "Amalgama De Almas";
+	enemigo[7,6] = "Rey De Los Demonios";
+	enemigo[7,7] = "IA";
+	
+	
+FinFuncion
+
+//------------------------------------------------------------------ NOMBRES DE HABILIDADES -----------------------------------------------------------
+
+
+//  habilidad[personaje, habilidad elegida]
+Funcion habilidades(habilidad)
+	
+	habilidad[0,0] = "Ataque Fuerte";
+	habilidad[0,1] = "Devolver Ataque";
+	habilidad[0,2] = "Luvia De Golpes";
+	//-------------------------
+	habilidad[1,0] = "Golpe De Bastón";
+	habilidad[1,1] = "Intangibilidad";
+	habilidad[1,2] = "Cuerpo Dividido";
+	//-------------------------
+	habilidad[2,0] = "Ataque Rápido";
+	habilidad[2,1] = "Rayo De Luz";
+	habilidad[2,2] = "Aumento De Velocidad";
+	//-------------------------
+	habilidad[3,0] = "Bola De Fuego";
+	habilidad[3,1] = "Sanación Mágica";
+	habilidad[3,2] = "Rayo";
+	//-------------------------
+	habilidad[4,0] = "Estocada";
+	habilidad[4,1] = "Quemadura";
+	habilidad[4,2] = "Inmunidad";
+	//-------------------------
+	habilidad[5,0] = "Golpe Al Alma";
+	habilidad[5,1] = "Robar Alma";
+	habilidad[5,2] = "Ayuda Del Más Allá";
+	//-------------------------
+	habilidad[6,0] = "Púas";
+	habilidad[6,1] = "Aterrorizar";
+	habilidad[6,2] = "Titán Demoníaco";
+	//-------------------------
+	habilidad[7,0] = "Desarmar";
+	habilidad[7,1] = "Mejorar";
+	habilidad[7,2] = "Meca";
+	
+FinFuncion
+
+
+//---- HABILIDADES DE ENEMIGOS ----
+
+Funcion habilidadesEnemigos(habilidadEnemigo)
+	
+	//------------- NIVEL 1 ------------- 
+	
+	//--- BESTIA
+	habilidadEnemigo[0,0,0] = "Rasguño";
+	habilidadEnemigo[0,0,1] = "Ladrido";
+	habilidadEnemigo[0,0,2] = "Mordida";
+	
+	//--- RELOJ REVIVIDO
+	habilidadEnemigo[0,1,0] = "Avance Temporal";
+	habilidadEnemigo[0,1,1] = "Retroceso Temporal";
+	habilidadEnemigo[0,1,2] = "Pausa Temporal";
+	
+	//--- CRIATURA OSCURA
+	habilidadEnemigo[0,2,0] = "Rasguño Oscuro";
+	habilidadEnemigo[0,2,1] = "Recubrimiento Oscuro";
+	habilidadEnemigo[0,2,2] = "Bomba De Oscuridad";
+	
+	//--- SLIME
+	habilidadEnemigo[0,3,0] = "Disparo De Baba";
+	habilidadEnemigo[0,3,1] = "Baba Realentizante";
+	habilidadEnemigo[0,3,2] = "Baba Venenosa";
+	
+	//--- SAQUEADOR
+	habilidadEnemigo[0,4,0] = "Apuñalar";
+	habilidadEnemigo[0,4,1] = "Atar";
+	habilidadEnemigo[0,4,2] = "Robo De Fuerza";
+	
+	//--- ALMA PERDIDA
+	habilidadEnemigo[0,5,0] = "Golpe Fantasma";
+	habilidadEnemigo[0,5,1] = "Cuerpo Fantasmal";
+	habilidadEnemigo[0,5,2] = "Poseción De Cuerpo";
+	
+	//--- ZOMBIE
+	habilidadEnemigo[0,6,0] = "Golpe";
+	habilidadEnemigo[0,6,1] = "Mordida Contagiosa";
+	habilidadEnemigo[0,6,2] = "Morir Y Renacer";
+	
+	//--- R.D.A
+	habilidadEnemigo[0,7,0] = "Disparo Electrizante";
+	habilidadEnemigo[0,7,1] = "Reparación";
+	habilidadEnemigo[0,7,2] = "Descargar Arma";
+	
+	
+	//-------------  NIVEL 2 ------------- 
+	
+	//--- SERPIENTE
+	habilidadEnemigo[1,0,0] = "Picadura Venenosa";
+	habilidadEnemigo[1,0,1] = "Mudar De Piel";
+	habilidadEnemigo[1,0,2] = "Estrangulamiento";
+	
+	//--- Newton
+	habilidadEnemigo[1,1,0] = "Manzana";
+	habilidadEnemigo[1,1,1] = "Acción-Reacción";
+	habilidadEnemigo[1,1,2] = "Aumento De Gravedad";
+	
+	//--- SUFRIMIENTO
+	habilidadEnemigo[1,2,0] = "Dolor";
+	habilidadEnemigo[1,2,1] = "Acostumbrado Al Dolor";
+	habilidadEnemigo[1,2,2] = "Sufrimiento Eterno";
+	
+	//--- PLANTA DEVORADORA
+	habilidadEnemigo[1,3,0] = "Mordisco";
+	habilidadEnemigo[1,3,1] = "Esporas Venenosas";
+	habilidadEnemigo[1,3,2] = "Reproducción";
+	
+	//--- VERDUGO
+	habilidadEnemigo[1,4,0] = "Hachazo";
+	habilidadEnemigo[1,4,1] = "Pena De Muerte";
+	habilidadEnemigo[1,4,2] = "Decapitar";
+	
+	//--- HUMANO POSEIDO
+	habilidadEnemigo[1,5,0] = "Ataque Demoníaco";
+	habilidadEnemigo[1,5,1] = "Jumpscare";
+	habilidadEnemigo[1,5,2] = "Cambio De Cuerpo";
+	
+	//--- ESQUELETO
+	habilidadEnemigo[1,6,0] = "Golpes De Huesos";
+	habilidadEnemigo[1,6,1] = "Susto";
+	habilidadEnemigo[1,6,2] = "Morir Y Revivir";
+	
+	//--- ESPECIMEN 21
+	habilidadEnemigo[1,7,0] = "Super Golpe";
+	habilidadEnemigo[1,7,1] = "Piel Resistente";
+	habilidadEnemigo[1,7,2] = "Cuerpo Demoledor";
+	
+	
+	//-------------  NIVEL 3 ------------- 
+	
+	//--- GOLEM DE PIEDRA
+	habilidadEnemigo[2,0,0] = "Piedra Gigante";
+	habilidadEnemigo[2,0,1] = "Lluvia De Rocas";
+	habilidadEnemigo[2,0,2] = "Terremoto";
+	
+	//--- TIME-REX
+	habilidadEnemigo[2,1,0] = "Mordida De Tiempo";
+	habilidadEnemigo[2,1,1] = "Estampida De Velociraptors";
+	habilidadEnemigo[2,1,2] = "Extinción";
+	
+	//--- SOMBRA MALIGNA
+	habilidadEnemigo[2,2,0] = "Ataque De Sombra";
+	habilidadEnemigo[2,2,1] = "Absorción De Sombras";
+	habilidadEnemigo[2,2,2] = "Mil Agujas De Sombras";
+	
+	//--- ALCE MAGICO
+	habilidadEnemigo[2,3,0] = "Cuernos Mágicos";
+	habilidadEnemigo[2,3,1] = "Destello De Estrellas";
+	habilidadEnemigo[2,3,2] = "Espíritus Del Bosque";
+	
+	//--- BUFON
+	habilidadEnemigo[2,4,0] = "Broma";
+	habilidadEnemigo[2,4,1] = "Sorpresa";
+	habilidadEnemigo[2,4,2] = "Actuación Estelar";
+	
+	//--- MEDIUM
+	habilidadEnemigo[2,5,0] = "Espíritu De Fuego";
+	habilidadEnemigo[2,5,1] = "Espíritu De Hielo";
+	habilidadEnemigo[2,5,2] = "Furia De Espíritus";
+	
+	//--- VAMPIRO
+	habilidadEnemigo[2,6,0] = "Mordida Vampírica";
+	habilidadEnemigo[2,6,1] = "Rey De Los Murciélagos";
+	habilidadEnemigo[2,6,2] = "Juventud Eterna";
+	
+	//--- PROYECTO ELIZ
+	habilidadEnemigo[2,7,0] = "Aguijón";
+	habilidadEnemigo[2,7,1] = "Regeneración Invisible";
+	habilidadEnemigo[2,7,2] = "Telarañas Venenosas";
+	
+	
+	//-------------  NIVEL 4 ------------- BOSS
+	
+	//--- BESTIA GIGANTE
+	habilidadEnemigo[3,0,0] = "Super Rasguño";
+	habilidadEnemigo[3,0,1] = "Aullido";
+	habilidadEnemigo[3,0,2] = "Super Mordida";
+	
+	//--- GUARDIAN DEL TIEMPO
+	habilidadEnemigo[3,1,0] = "Reloj De Bolsillo";
+	habilidadEnemigo[3,1,1] = "Relatividad";
+	habilidadEnemigo[3,1,2] = "Cuenta Regresiva";
+	
+	//--- PRINCIPE DE LAS SOMBRA
+	habilidadEnemigo[3,2,0] = "Corte De Sombra";
+	habilidadEnemigo[3,2,1] = "Cuerpo De Sombre";
+	habilidadEnemigo[3,2,2] = "Mundo De Las Sombras";
+	
+	//--- BRUJA
+	habilidadEnemigo[3,3,0] = "Escobazo Mágico";
+	habilidadEnemigo[3,3,1] = "Antídoto";
+	habilidadEnemigo[3,3,2] = "Poción Maligna";
+	
+	//--- REY
+	habilidadEnemigo[3,4,0] = "Puño Real";
+	habilidadEnemigo[3,4,1] = "Corona";
+	habilidadEnemigo[3,4,2] = "Cetro Del Poder I";
+	
+	//--- FANTASMA ANTIGUO
+	habilidadEnemigo[3,5,0] = "Espada Antigua";
+	habilidadEnemigo[3,5,1] = "Ataque Invisible";
+	habilidadEnemigo[3,5,2] = "Maldición";
+	
+	//--- LA PARCA
+	habilidadEnemigo[3,6,0] = "Guadaña Mortal";
+	habilidadEnemigo[3,6,1] = "Sin Temor A Morir";
+	habilidadEnemigo[3,6,2] = "Hora De La Muerte";
+	
+	//--- CIENTIFICO LOCO
+	habilidadEnemigo[3,7,0] = "Disparo Cuántico";
+	habilidadEnemigo[3,7,1] = "Super Hormonas";
+	habilidadEnemigo[3,7,2] = "Inyección De Botox";
+	
+	
+	//-------------  NIVEL 5 ------------- 
+	
+	//--- CAZADOR
+	habilidadEnemigo[4,0,0] = "Daga Afilada";
+	habilidadEnemigo[4,0,1] = "Trampa De Osos";
+	habilidadEnemigo[4,0,2] = "Headshot";
+	
+	//--- BABY COMMANDER
+	habilidadEnemigo[4,1,0] = "Toque De Bastón";
+	habilidadEnemigo[4,1,1] = "Intocable";
+	habilidadEnemigo[4,1,2] = "Multi Cuerpo";
+	
+	//--- CABALLERO OSCURO
+	habilidadEnemigo[4,2,0] = "Disparo Oscuridad";
+	habilidadEnemigo[4,2,1] = "Cabalgar";
+	habilidadEnemigo[4,2,2] = "Espadazo Oscuro";
+	
+	//--- SLIME GIGANTE
+	habilidadEnemigo[4,3,0] = "Baba Inflamable";
+	habilidadEnemigo[4,3,1] = "Cuerpo Moldeable";
+	habilidadEnemigo[4,3,2] = "Lluvia De Baba Venenosa";
+	
+	//--- CLERIGO
+	habilidadEnemigo[4,4,0] = "Orden Sagrada";
+	habilidadEnemigo[4,4,1] = "Rezar";
+	habilidadEnemigo[4,4,2] = "Elegido De Dios";
+	
+	//--- CASA MALDITA
+	habilidadEnemigo[4,5,0] = "Actividad Paranormal";
+	habilidadEnemigo[4,5,1] = "Cuando Las Luces Se Apagan";
+	habilidadEnemigo[4,5,2] = "Fantasmas Del Pasado";
+	
+	//--- CHUPACABRAS
+	habilidadEnemigo[4,6,0] = "Ataque Feroz";
+	habilidadEnemigo[4,6,1] = "Succionar Sangre";
+	habilidadEnemigo[4,6,2] = "Criatura Legendaria";
+	
+	//--- EXPERIMENTO MEDUSA
+	habilidadEnemigo[4,7,0] = "Coletazo";
+	habilidadEnemigo[4,7,1] = "Auto Petrificación";
+	habilidadEnemigo[4,7,2] = "Petrificar";
+	
+	
+	//-------------  NIVEL 6 ------------- 
+	
+	//--- TOXIC KING
+	habilidadEnemigo[5,0,0] = "Disparo De Veneno";
+	habilidadEnemigo[5,0,1] = "Cuerpo Venenoso";
+	habilidadEnemigo[5,0,2] = "Aire Tóxico";
+	
+	//--- GLITCH
+	habilidadEnemigo[5,1,0] = "Bug";
+	habilidadEnemigo[5,1,1] = "Lag";
+	habilidadEnemigo[5,1,2] = "Crash";
+	
+	//--- IMITADOR
+	habilidadEnemigo[5,2,0] = "Imitar Ataque";
+	habilidadEnemigo[5,2,1] = "Imitar Habilidad";
+	habilidadEnemigo[5,2,2] = "Imitar Especial";
+	
+	//--- FÉNIX
+	habilidadEnemigo[5,3,0] = "Llamas Regenerativas";
+	habilidadEnemigo[5,3,1] = "Abrasamiento";
+	habilidadEnemigo[5,3,2] = "Renacimiento";
+	
+	//--- GRAN CABALLERO REAL
+	habilidadEnemigo[5,4,0] = "Estocada Real";
+	habilidadEnemigo[5,4,1] = "Escudo Real";
+	habilidadEnemigo[5,4,2] = "Por Su Majestad";
+	
+	//--- MUJER DEL ESPEJO
+	habilidadEnemigo[5,5,0] = "Reflejo";
+	habilidadEnemigo[5,5,1] = "Espejismo";
+	habilidadEnemigo[5,5,2] = "Dimensión Del Espejo";
+	
+	//--- CERBERO 
+	habilidadEnemigo[5,6,0] = "Veltesta"; // DERECHA
+	habilidadEnemigo[5,6,1] = "Tretesta"; // CENTRAL
+	habilidadEnemigo[5,6,2] = "Drittesta"; // IZQUIERDA
+	
+	//--- R.P.P
+	habilidadEnemigo[5,7,0] = "Maza Pesada";
+	habilidadEnemigo[5,7,1] = "Proteger y Reparar";
+	habilidadEnemigo[5,7,2] = "Auto-Destrucción";
+	
+	
+	//-------------  NIVEL 7 ------------- 
+	
+	//--- MADRE PLANTA
+	habilidadEnemigo[6,0,0] = "Espinas";
+	habilidadEnemigo[6,0,1] = "Fotosíntesis";
+	habilidadEnemigo[6,0,2] = "Mundo Verde";
+	
+	//--- C.MILOS
+	habilidadEnemigo[6,1,0] = "Bastón Ligero";
+	habilidadEnemigo[6,1,1] = "Cuerpo Parpadeante";
+	habilidadEnemigo[6,1,2] = "Burbuja";
+	
+	//--- PESADILLA
+	habilidadEnemigo[6,2,0] = "Fobia";
+	habilidadEnemigo[6,2,1] = "Sin Escapatoria";
+	habilidadEnemigo[6,2,2] = "Tu Mayor Miedo";
+	
+	//--- MONSTRUO DE NIEVE
+	habilidadEnemigo[6,3,0] = "Bola De Nieve";
+	habilidadEnemigo[6,3,1] = "Tormenta De Nieve";
+	habilidadEnemigo[6,3,2] = "Edad De Hielo";
+	
+	//--- REINA
+	habilidadEnemigo[6,4,0] = "Cetro Del Poder II";
+	habilidadEnemigo[6,4,1] = "Trono";
+	habilidadEnemigo[6,4,2] = "Máxima Autoridad";
+	
+	//--- EL MALIGNO
+	habilidadEnemigo[6,5,0] = "Espíritus Malignos";
+	habilidadEnemigo[6,5,1] = "Absorción Fantasmal";
+	habilidadEnemigo[6,5,2] = "Corromper Alma";
+	
+	//--- GUARDIAN DEL INFRAMUNDO
+	habilidadEnemigo[6,6,0] = "Tridente Mortal";
+	habilidadEnemigo[6,6,1] = "Fuego Infernal";
+	habilidadEnemigo[6,6,2] = "Condena Eterna";
+	
+	//--- H4R2
+	habilidadEnemigo[6,7,0] = "Misiles";
+	habilidadEnemigo[6,7,1] = "Cuerpo Electrizante";
+	habilidadEnemigo[6,7,2] = "Visión Futura";
+	
+	
+	//-------------  NIVEL 8 ------------- 
+	
+	//--- CAMBIA FORMAS
+	habilidadEnemigo[7,0,0] = "Ataque";
+	habilidadEnemigo[7,0,1] = "Habilidad";
+	habilidadEnemigo[7,0,2] = "Especial";
+	
+	//--- ENTIDAD DEL TIEMPO
+	habilidadEnemigo[7,1,0] = "Golpe De Tiempo";
+	habilidadEnemigo[7,1,1] = "Volver Al Pasado";
+	habilidadEnemigo[7,1,2] = "Fin De Los Tiempos";
+	
+	//--- DIOS DE LA LUNA
+	habilidadEnemigo[7,2,0] = "Corte De Oscuridad";
+	habilidadEnemigo[7,2,1] = "Fuergo Oscuro";
+	habilidadEnemigo[7,2,2] = "Eclipse Solar";
+	
+	//--- MAESTRO MAGO
+	habilidadEnemigo[7,3,0] = "Lazer De Los Elementos";
+	habilidadEnemigo[7,3,1] = "Meteoros";
+	habilidadEnemigo[7,3,2] = "Danza De Elementos";
+	
+	//--- DRAGON
+	habilidadEnemigo[7,4,0] = "Llamarada";
+	habilidadEnemigo[7,4,1] = "Poder Mental";
+	habilidadEnemigo[7,4,2] = "Caos";
+	
+	//--- AMALGAMA DE ALMAS
+	habilidadEnemigo[7,5,0] = "Soltar Alma";
+	habilidadEnemigo[7,5,1] = "Añadir Alma";
+	habilidadEnemigo[7,5,2] = "Drenaje De Almas";
+	
+	//--- REY DE LOS DEMONIOS
+	habilidadEnemigo[7,6,0] = "Ataque Oxidador";
+	habilidadEnemigo[7,6,1] = "Marchitar";
+	habilidadEnemigo[7,6,2] = "Extintor De Mundos";
+	
+	//--- IA
+	habilidadEnemigo[7,7,0] = "R.D.A.R.P.P";
+	habilidadEnemigo[7,7,1] = "Rayo De Antimateria";
+	habilidadEnemigo[7,7,2] = "Reiniciar Sistemas";
+	
+FinFuncion
+
+//--------------------------------------------------------------------------- MENÚ -----------------------------------------------------------------------------
+
+Funcion elegir = mode(c)
+	Definir elegir Como Entero;
+	Repetir
+		Borrar Pantalla;
+		Escribir "|---------//Menú\\---------|";
+		Escribir "| 1. Modo Historia.        |";
+		Escribir "| 2. Modo Libre            |";
+		Escribir "| 3. Modo Entrenamiento    |";
+		Escribir "| 4. Desafios              |";
+		Escribir "| 5. Como Jugar            |";
+		Escribir "| 6. Salir                 |";
+		Escribir "|---------------|----------|";
+		Escribir "| Elija el modo |     ", c, "    |";
+		Escribir "|---------------|   " Sin Saltar;
+		Leer elegir;
+		Escribir "";
+		si elegir < 1 | elegir > 6 Entonces
+			Borrar Pantalla;
+			Escribir "|---------//Menú\\---------|";
+			Escribir "|                          |";
+			Escribir "|       XX ERROR XX        |";
+			Escribir "|    OPCIÓN INCORRECTA     |";
+			Escribir "|                          |";
+			Escribir "| Presione una tecla para  |";
+			Escribir "|         volver           |";
+			Escribir "|---------------|----------|";
+			Escribir "| XXXXXXXXXXXXX |     ", c, "    |";
+			Escribir "|---------------|   " Sin Saltar;
+			Esperar Tecla;
+			Escribir "";
+		FinSi
+		
+	Hasta Que elegir >= 1 & elegir <= 6
+	
+FinFuncion
+
+//-------------------------------------------------------------------- ADMINISTRACIONES ----------------------------------------------------------------------
+
+//---------------------- Vidas personajes
+
+Funcion vidasBases(auxV, auxVE)
+	auxV[0] = 200;
+	auxV[1] = 175;
+	auxV[2] = 100;
+	auxV[3] = 150;
+	auxV[4] = 125;
+	auxV[5] = 180;
+	auxV[6] = 110;
+	auxV[7] = 140;
+	
+	//---------------------- Vidas Enemigos
+	
+	//----- NIVEL 1 ----
+	auxVE[0,0] = 50;//""Bestia";
+	auxVE[0,1] = 40;//""Reloj Revivido";
+	auxVE[0,2] = 75;//""Criatura Oscura";
+	auxVE[0,3] = 100;//""Slime";
+	auxVE[0,4] = 75;//""Saqueador";
+	auxVE[0,5] = 100;//""Alma Perdida";
+	auxVE[0,6] = 100;//""Zombie";
+	auxVE[0,7] = 80;//""R.D.A";
+	//----- NIVEL 2 ----
+	auxVE[1,0] = 70;//""Serpiente";
+	auxVE[1,1] = 100;//""Newton";
+	auxVE[1,2] = 100;//""Sufrimiento";
+	auxVE[1,3] = 66;//""Planta Devoradora";
+	auxVE[1,4] = 125;//""Verdugo";
+	auxVE[1,5] = 65;//""Humano Poseído";
+	auxVE[1,6] = 75;//""Esqueleto";
+	auxVE[1,7] = 150;//""Espécimen 21";
+	//----- NIVEL 3 ----
+	auxVE[2,0] = 200;//""Golem De Pedra";
+	auxVE[2,1] = 150;//""Time-Rex";
+	auxVE[2,2] = 120;//""Sombra Maligna";
+	auxVE[2,3] = 110;//""Alce Mágico";
+	auxVE[2,4] = 150;//""Bufón";
+	auxVE[2,5] = 175;//""Medium";
+	auxVE[2,6] = 100;//""Vampiro";
+	auxVE[2,7] = 150;//""Proyecto Eliz";
+	//----- NIVEL 4 ---- Boss
+	auxVE[3,0] = 250;//""Bestia Gigante";
+	auxVE[3,1] = 200;//""Guardian Del Tiempo";
+	auxVE[3,2] = 200;//""Principe De Las Sombras";
+	auxVE[3,3] = 175;//""Bruja";
+	auxVE[3,4] = 225;//""Rey";
+	auxVE[3,5] = 210;//""Fantasma Antiguo";
+	auxVE[3,6] = 190;//""La Parca";
+	auxVE[3,7] = 205;//""Científico Loco";
+	//----- NIVEL 5 ----
+	auxVE[4,0] = 225;//""Cazador";
+	auxVE[4,1] = 190;//""Baby Commander";
+	auxVE[4,2] = 225;//""Caballero Oscuro";
+	auxVE[4,3] = 250;//""Slime Gigante";
+	auxVE[4,4] = 200;//""Clérigo";
+	auxVE[4,5] = 300;//""Casa Maldita";
+	auxVE[4,6] = 210;//""Chupacabras";
+	auxVE[4,7] = 200;//""Experimento Medusa";
+	//----- NIVEL 6 ----
+	auxVE[5,0] = 275;//""Toxic King";
+	auxVE[5,1] = 225;//""Glitch";
+	auxVE[5,2] = 280;//""Imitador";
+	auxVE[5,3] = 200;//""Fénix";
+	auxVE[5,4] = 300;//""Gran Caballero Real";
+	auxVE[5,5] = 270;//""Mujer Del Espejo";
+	auxVE[5,6] = 290;//""Cerbero";
+	auxVE[5,7] = 300;//""R.P.P";
+	//----- NIVEL 7 ----
+	auxVE[6,0] = 320;//""Madre Planta";
+	auxVE[6,1] = 275;//""C.Milos";
+	auxVE[6,2] = 300;//""Pesadilla";
+	auxVE[6,3] = 375;//""Monstruo De Nieve";
+	auxVE[6,4] = 350;//""Reina";
+	auxVE[6,5] = 325;//""El Maligno";
+	auxVE[6,6] = 380;//""Guardián Del Inframundo";
+	auxVE[6,7] = 275;//""H4R2";
+	//----- NIVEL 8 ---- Boss
+	auxVE[7,0] = 375;//""Cambia Formas";
+	auxVE[7,1] = 300;//""Entidad Del Tiempo";
+	auxVE[7,2] = 450;//""Dios De La Luna";
+	auxVE[7,3] = 400;//""Maestro Mago";
+	auxVE[7,4] = 500;//""Dragón";
+	auxVE[7,5] = 1000;//""Amalgama De Almas";
+	auxVE[7,6] = 475;//""Rey De Los Demonios";
+	auxVE[7,7] = 325;//""IA";
+	
+FinFuncion
+
+//----------------- costo de ataque
+
+Funcion costos(costo)
+	costo[0,0] = 1; //"Ataque Fuerte"; 
+	costo[0,1] = 1; //"Devolver Ataque";
+	costo[0,2] = 1000; //"Luvia De Golpes";
+	//-------------------------
+	costo[1,0] = 1; //"Golpe De Bastón";
+	costo[1,1] = 1; //"Intangibilidad";
+	costo[1,2] = 1000; //"Cuerpo Dividido";
+	//-------------------------
+	costo[2,0] = 0.67; //"Ataque Rápido";
+	costo[2,1] = 1; //"Rayo De Luz";
+	costo[2,2] = 1000; //"Aumento De Velocidad";
+	//-------------------------
+	costo[3,0] = 1; //"Bola De Fuego";
+	costo[3,1] = 1; //"Sanación Mágica";
+	costo[3,2] = 1000; //"Rayo";
+	//-------------------------
+	costo[4,0] = 0.5; //"Estocada";
+	costo[4,1] = 1; //"Quemadura";
+	costo[4,2] = 1000; //"Inmunidad";
+	//-------------------------
+	costo[5,0] = 1; //"Golpe Al Alma";
+	costo[5,1] = 1; //"Robar Alma";
+	costo[5,2] = 1000; //"Ayuda Del Más Allá";
+	//-------------------------
+	costo[6,0] = 0.34; //"Púas";
+	costo[6,1] = 1; //"Aterrorizar";
+	costo[6,2] = 1000; //"Titán Demoníaco";
+	//-------------------------
+	costo[7,0] = 1; //"Desarmar";
+	costo[7,1] = 1; //"Mejorar";
+	costo[7,2] = 1000; //"Meca";
+FinFuncion
+
+//----------------- costo de ataque enemigo
+
+Funcion costosEnemigos(costo, costoEnemigo)
+	
+	
+FinFuncion
+
+//---------------------- Daño personajes
+
+Funcion damageBase(damage, damageEnemigo, totalDamage, atacar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem)
+	damage[0,0] = 15.55; atacar[0,0] = verdadero; //"Ataque Fuerte"; 
+	damage[0,1] = 0; atacar[0,1] = verdadero; //"Devolver Ataque";
+	damage[0,2] = 10.55; atacar[0,2] = verdadero; //"Luvia De Golpes";
+	//-------------------------
+	damage[1,0] = 1.23456789; atacar[1,0] = verdadero; //"Golpe De Bastón";
+	damage[1,1] = 0; atacar[1,1] = falso; //"Intangibilidad";
+	damage[1,2] = 0; atacar[1,2] = falso; //"Cuerpo Dividido";
+	//-------------------------
+	damage[2,0] = 9.3; atacar[2,0] = verdadero; //"Ataque Rápido";
+	damage[2,1] = 0.3; atacar[2,1] = verdadero; //"Rayo De Luz";
+	damage[2,2] = 0; atacar[2,2] = Falso; //"Aumento De Velocidad";
+	//-------------------------
+	damage[3,0] = 12.25; atacar[3,0] = verdadero; //"Bola De Fuego";
+	damage[3,1] = 0; atacar[3,1] = falso; //"Sanación Mágica";
+	damage[3,2] = 40; atacar[3,2] = verdadero; //"Rayo";
+	//-------------------------
+	damage[4,0] = 7.5; atacar[4,0] = verdadero; //"Estocada";
+	damage[4,1] = 12.12; atacar[4,1] = verdadero; //"Quemadura";
+	damage[4,2] = 0; atacar[4,2] = Falso; //"Inmunidad";
+	//-------------------------
+	damage[5,0] = 9.99; atacar[5,0] = verdadero; //"Golpe Al Alma";
+	damage[5,1] = ((vidaMaxima - vida) * 10/100) + (vidaEnemigo * 10/100); atacar[5,1] = verdadero; //"Robar Alma";
+	damage[5,2] = 0;  atacar[5,2] = Falso; //"Ayuda Del Más Allá";
+	//-------------------------
+	damage[6,0] = 3.1; atacar[6,0] = verdadero; //"Púas";
+	damage[6,1] = 0; atacar[6,1] = Falso; //"Aterrorizar";
+	damage[6,2] = 0.5; atacar[6,2] = verdadero; //"Titán Demoníaco";
+	//-------------------------
+	damage[7,0] = 11.11; atacar[7,0] = verdadero; //"Desarmar";
+	damage[7,1] = 0; atacar[7,1] = Falso; //"Mejorar";
+	damage[7,2] = 0; atacar[7,2] = Falso; //"Meca";
+	
+	
+	
+FinFuncion
+
+//---------------------- Sanación personajes
+
+Funcion sanarBase(cura, damage, damageEnemigo, totalDamage, sanar, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem, atacarExtra, durAumentador)
+	cura[0,0] = 0; sanar[0,0] = Falso; //"Ataque Fuerte"; 
+	cura[0,1] = 0; sanar[0,1] = Falso; //"Devolver Ataque";
+	cura[0,2] = 0; sanar[0,2] = Falso; //"Luvia De Golpes";
+	//-------------------------
+	cura[1,0] = 0; sanar[1,0] = falso; //"Golpe De Bastón";
+	cura[1,1] = 10; sanar[1,1] = Verdadero; //"Intangibilidad";
+	cura[1,2] = (vidaMaxima * (atacarExtra / 100)) * durAumentador[0]; sanar[1,2] = Verdadero; //"Cuerpo Dividido";
+	//-------------------------
+	cura[2,0] = 0; sanar[2,0] = Falso; //"Ataque Rápido";
+	cura[2,1] = 0; sanar[2,1] = Falso; //"Rayo De Luz";
+	cura[2,2] = 0; sanar[2,2] = Falso; //"Aumento De Velocidad";
+	//-------------------------
+	cura[3,0] = 0; sanar[3,0] = Falso; //"Bola De Fuego";
+	cura[3,1] = 30; sanar[3,1] = Verdadero; //"Sanación Mágica";
+	cura[3,2] = 0; sanar[3,2] = Falso; //"Rayo";
+	//-------------------------
+	cura[4,0] = 0; sanar[4,0] = Falso; //"Estocada";
+	cura[4,1] = 0; sanar[4,1] = Falso; //"Quemadura";
+	cura[4,2] = 0; sanar[4,2] = Falso; //"Inmunidad";
+	//-------------------------
+	cura[5,0] = 0; sanar[5,0] = Falso; //"Golpe Al Alma";
+	cura[5,1] = damage[5,1]; sanar[5,1] = verdadero; //"Robar Alma";
+	cura[5,2] = vidaMaxima * 2/100;  sanar[5,2] = verdadero; //"Ayuda Del Más Allá";
+	//-------------------------
+	cura[6,0] = 0; sanar[6,0] = Falso; //"Púas";
+	cura[6,1] = 0; sanar[6,1] = Falso; //"Aterrorizar";
+	cura[6,2] = 0; sanar[6,2] = Falso; //"Titán Demoníaco";
+	//-------------------------
+	cura[7,0] = 0; sanar[7,0] = Falso; //"Desarmar";
+	cura[7,1] = vidaMaxima * 7/100; sanar[7,1] = Verdadero; //"Mejorar";
+	cura[7,2] = 0; sanar[7,2] = Falso; //"Meca";
+	
+FinFuncion
+
+//---------------------- Aumentar Vida personajes
+
+Funcion vidaAumentada = aumentoDeVida(vidaAumentada, atacarExtra, a, c)
+	Definir fVidaAumentada Como Real;
+	Dimension fVidaAumentada[8,3];
+	fVidaAumentada[0,0] = 1; //"Ataque Fuerte"; 
+	fVidaAumentada[0,1] = 1; //"Devolver Ataque";
+	fVidaAumentada[0,2] = 1; //"Luvia De Golpes";
+	//-------------------------
+	fVidaAumentada[1,0] = 1; //"Golpe De Bastón";
+	fVidaAumentada[1,1] = 1; //"Intangibilidad";
+	fVidaAumentada[1,2] = (atacarExtra / 100) + 1; //"Cuerpo Dividido";
+	//-------------------------
+	fVidaAumentada[2,0] = 1; //"Ataque Rápido";
+	fVidaAumentada[2,1] = 1; //"Rayo De Luz";
+	fVidaAumentada[2,2] = 1; //"Aumento De Velocidad";
+	//-------------------------
+	fVidaAumentada[3,0] = 1; //"Bola De Fuego";
+	fVidaAumentada[3,1] = 1; //"Sanación Mágica";
+	fVidaAumentada[3,2] = 1; //"Rayo";
+	//-------------------------
+	fVidaAumentada[4,0] = 1; //"Estocada";
+	fVidaAumentada[4,1] = 1; //"Quemadura";
+	fVidaAumentada[4,2] = 1; //"Inmunidad";
+	//-------------------------
+	fVidaAumentada[5,0] = 1; //"Golpe Al Alma";
+	fVidaAumentada[5,1] = 1; //"Robar Alma";
+	fVidaAumentada[5,2] = 1; //"Ayuda Del Más Allá";
+	//-------------------------
+	fVidaAumentada[6,0] = 1; //"Púas";
+	fVidaAumentada[6,1] = 1; //"Aterrorizar";
+	fVidaAumentada[6,2] = 1; //"Titán Demoníaco";
+	//-------------------------
+	fVidaAumentada[7,0] = 1; //"Desarmar";
+	fVidaAumentada[7,1] = 1.02; //"Mejorar";
+	fVidaAumentada[7,2] = 1; //"Meca";
+	
+	vidaAumentada = fVidaAumentada[a,c];
+	
+FinFuncion
+
+//---------------------- Multiplicar Daño personajes
+
+Funcion multiplicar(multiplicador)
+	multiplicador[0,0] = 1; //"Ataque Fuerte"; 
+	multiplicador[0,1] = 2;//"Devolver Ataque";
+	multiplicador[0,2] = Aleatorio(2,6); //"Luvia De Golpes";
+	//-------------------------
+	multiplicador[1,0] = 1; //"Golpe De Bastón";
+	multiplicador[1,1] = 1; //"Intangibilidad";
+	multiplicador[1,2] = 1; //"Cuerpo Dividido";
+	//-------------------------
+	multiplicador[2,0] = 1; //"Ataque Rápido";
+	multiplicador[2,1] = Aleatorio(63,93); //"Rayo De Luz";
+	multiplicador[2,2] = 1; //"Aumento De Velocidad";
+	//-------------------------
+	multiplicador[3,0] = 1; //"Bola De Fuego";
+	multiplicador[3,1] = 1; //"Sanación Mágica";
+	multiplicador[3,2] = 1; //"Rayo";
+	//-------------------------
+	multiplicador[4,0] = 1;  //"Estocada";
+	multiplicador[4,1] = 1;  //"Quemadura";
+	multiplicador[4,2] = 1;  //"Inmunidad";
+	//-------------------------
+	multiplicador[5,0] = 1; //"Golpe Al Alma";
+	multiplicador[5,1] = 1;  //"Robar Alma";
+	multiplicador[5,2] = 1; //"Ayuda Del Más Allá";
+	//-------------------------
+	multiplicador[6,0] = Aleatorio(1,2); //"Púas";
+	multiplicador[6,1] = 1; //"Aterrorizar";
+	multiplicador[6,2] = Aleatorio(51,101); //"Titán Demoníaco";
+	//-------------------------
+	multiplicador[7,0] = 1; //"Desarmar";
+	multiplicador[7,1] = 1; //"Mejorar";
+	multiplicador[7,2] = 1; //"Meca";
+	
+FinFuncion
+
+//---------------------- Aumentar Fuerza personajes
+
+Funcion seAumenta = aumentar(aumentador, durAumentador, seAumenta, aumento, a, c, atacarExtra)
+	Definir fAumentador Como Real;
+	Definir fDurAumentador Como Entero;
+	Definir fSeAumenta Como Logico;
+	Definir fAumento Como Caracter;
+	Dimension fSeAumenta[8,3], fDurAumentador[8,3], fAumentador[8,3], fAumento[8,3];
+	
+	fSeAumenta[0,0] = seAumenta; fDurAumentador[0,0] = durAumentador[0]; fAumentador[0,0] = aumentador[0]; fAumento[0,0] = aumento[0];
+	fSeAumenta[0,1] = seAumenta; fDurAumentador[0,1] = durAumentador[0]; fAumentador[0,1] = aumentador[0]; fAumento[0,0] = aumento[0];
+	fSeAumenta[0,2] = seAumenta; fDurAumentador[0,2] = durAumentador[0]; fAumentador[0,2] = aumentador[0]; fAumento[0,0] = aumento[0];
+	//-------------------------
+	fSeAumenta[1,0] = seAumenta; fDurAumentador[1,0] = durAumentador[0]; fAumentador[1,0] = aumentador[0]; fAumento[1,0] = aumento[0];
+	fSeAumenta[1,1] = seAumenta; fDurAumentador[1,1] = durAumentador[0]; fAumentador[1,1] = aumentador[0]; fAumento[1,1] = aumento[0];
+	fSeAumenta[1,2] = Verdadero; fDurAumentador[1,2] = 2; fAumentador[1,2] = atacarExtra; fAumento[1,2] = "^";
+	//-------------------------
+	fSeAumenta[2,0] = seAumenta; fDurAumentador[2,0] = durAumentador[0]; fAumentador[2,0] = aumentador[0]; fAumento[2,0] = aumento[0];
+	fSeAumenta[2,1] = seAumenta; fDurAumentador[2,1] = durAumentador[0]; fAumentador[2,1] = aumentador[0]; fAumento[2,1] = aumento[0];
+	fSeAumenta[2,2] = Verdadero; fDurAumentador[2,2] = 3; fAumentador[2,2] = 1.10; fAumento[2,2] = "*";
+	//-------------------------
+	fSeAumenta[3,0] = seAumenta; fDurAumentador[3,0] = durAumentador[0]; fAumentador[3,0] = aumentador[0]; fAumento[3,0] = aumento[0];
+	fSeAumenta[3,1] = seAumenta; fDurAumentador[3,1] = durAumentador[0]; fAumentador[3,1] = aumentador[0]; fAumento[3,1] = aumento[0];
+	fSeAumenta[3,2] = seAumenta; fDurAumentador[3,2] = durAumentador[0]; fAumentador[3,2] = aumentador[0]; fAumento[3,2] = aumento[0];
+	//-------------------------
+	fSeAumenta[4,0] = seAumenta; fDurAumentador[4,0] = durAumentador[0]; fAumentador[4,0] = aumentador[0]; fAumento[4,0] = aumento[0];
+	fSeAumenta[4,1] = seAumenta; fDurAumentador[4,1] = durAumentador[0]; fAumentador[4,1] = aumentador[0]; fAumento[4,1] = aumento[0];
+	fSeAumenta[4,2] = seAumenta; fDurAumentador[4,2] = durAumentador[0]; fAumentador[4,2] = aumentador[0]; fAumento[4,2] = aumento[0];
+	//-------------------------
+	fSeAumenta[5,0] = seAumenta; fDurAumentador[5,0] = durAumentador[0]; fAumentador[5,0] = aumentador[0]; fAumento[5,0] = aumento[0];
+	fSeAumenta[5,1] = seAumenta; fDurAumentador[5,1] = durAumentador[0]; fAumentador[5,1] = aumentador[0]; fAumento[5,1] = aumento[0];
+	fSeAumenta[5,2] = Verdadero; fDurAumentador[5,2] = Aleatorio(2,10); fAumentador[5,2] = (durAumentador[0] / 10) + 1; fAumento[5,2] = "*";
+	//-------------------------
+	fSeAumenta[6,0] = seAumenta; fDurAumentador[6,0] = durAumentador[0]; fAumentador[6,0] = aumentador[0]; fAumento[6,0] = aumento[0];
+	fSeAumenta[6,1] = seAumenta; fDurAumentador[6,1] = durAumentador[0]; fAumentador[6,1] = aumentador[0]; fAumento[6,1] = aumento[0];
+	fSeAumenta[6,2] = seAumenta; fDurAumentador[6,2] = durAumentador[0]; fAumentador[6,2] = aumentador[0]; fAumento[6,2] = aumento[0];
+	//-------------------------
+	fSeAumenta[7,0] = seAumenta; fDurAumentador[7,0] = durAumentador[0]; fAumentador[7,0] = aumentador[0]; fAumento[7,0] = aumento[0];
+	fSeAumenta[7,1] = Verdadero; fDurAumentador[7,1] = 1000; fAumentador[7,1] = aumentador[0] + 0.05; fAumento[7,1] = "*";
+	fSeAumenta[7,2] = seAumenta; fDurAumentador[7,2] = durAumentador[0]; fAumentador[7,2] = aumentador[0]; fAumento[7,2] = aumento[0];
+	
+	seAumenta = fSeAumenta[a,c];
+	si seAumenta Entonces
+		aumento[0] = fAumento[a,c];
+		si durAumentador[0] < fDurAumentador[a,c] Entonces
+			durAumentador[0] = fDurAumentador[a,c];
+		FinSi
+		si aumentador[0] <= fAumentador[a,c] Entonces
+			si fSeAumenta[5,0] Entonces
+				fAumentador[5,0] = (durAumentador[0] / 10) + 1;
+			FinSi
+			si fSeAumenta[5,1] Entonces
+				fAumentador[5,1] = (durAumentador[0] / 10) + 1;
+			FinSi
+			si fSeAumenta[5,2] Entonces
+				fAumentador[5,2] = (durAumentador[0] / 10) + 1;
+			FinSi
+			aumentador[0] = fAumentador[a,c];
+		FinSi
+	FinSi
+	
+	si aumentador[0] == 0 Entonces
+		aumentador[0] = 1;
+	FinSi
+	
+FinFuncion
+
+//---------------------- Atacar Extra personajes
+
+Funcion atacarExtra = atacarExtras(atacarExtra, durAttExtra, a, c)
+	Definir fAtacarExtra, fDurAttExtra Como Entero;
+	Dimension fAtacarExtra[8,3], fDurAttExtra[8,3];
+	
+	fAtacarExtra[0,0] = atacarExtra; fDurAttExtra[0,0] = durAttExtra[0]; //"Ataque Fuerte"; 
+	fAtacarExtra[0,1] = atacarExtra; fDurAttExtra[0,1] = durAttExtra[0]; //"Devolver Ataque";
+	fAtacarExtra[0,2] = atacarExtra; fDurAttExtra[0,2] = durAttExtra[0]; //"Luvia De Golpes";
+	//-------------------------
+	fAtacarExtra[1,0] = atacarExtra; fDurAttExtra[1,0] = durAttExtra[0]; //"Golpe De Bastón";
+	fAtacarExtra[1,1] = atacarExtra; fDurAttExtra[1,1] = durAttExtra[0]; //"Intangibilidad";
+	fAtacarExtra[1,2] = Aleatorio(4,8); fDurAttExtra[1,2] = 3; //"Cuerpo Dividido";
+	//-------------------------
+	fAtacarExtra[2,0] = atacarExtra; fDurAttExtra[2,0] = durAttExtra[0]; //"Ataque Rápido";
+	fAtacarExtra[2,1] = atacarExtra; fDurAttExtra[2,1] = durAttExtra[0]; //"Rayo De Luz";
+	fAtacarExtra[2,2] = 2; fDurAttExtra[2,2] = 4; //"Aumento De Velocidad";
+	//-------------------------
+	fAtacarExtra[3,0] = atacarExtra; fDurAttExtra[3,0] = durAttExtra[0]; //"Bola De Fuego";
+	fAtacarExtra[3,1] = atacarExtra; fDurAttExtra[3,1] = durAttExtra[0]; //"Sanación Mágica";
+	fAtacarExtra[3,2] = atacarExtra; fDurAttExtra[3,2] = durAttExtra[0]; //"Rayo";
+	//-------------------------
+	fAtacarExtra[4,0] = atacarExtra; fDurAttExtra[4,0] = durAttExtra[0]; //"Estocada";
+	fAtacarExtra[4,1] = atacarExtra; fDurAttExtra[4,1] = durAttExtra[0]; //"Quemadura";
+	fAtacarExtra[4,2] = atacarExtra; fDurAttExtra[4,2] = durAttExtra[0]; //"Inmunidad";
+	//-------------------------
+	fAtacarExtra[5,0] = atacarExtra; fDurAttExtra[5,0] = durAttExtra[0]; //"Golpe Al Alma";
+	fAtacarExtra[5,1] = atacarExtra; fDurAttExtra[5,1] = durAttExtra[0]; //"Robar Alma";
+	fAtacarExtra[5,2] = atacarExtra; fDurAttExtra[5,2] = durAttExtra[0]; //"Ayuda Del Más Allá";
+	//-------------------------
+	fAtacarExtra[6,0] = atacarExtra; fDurAttExtra[6,0] = durAttExtra[0]; //"Púas";
+	fAtacarExtra[6,1] = atacarExtra; fDurAttExtra[6,1] = durAttExtra[0]; //"Aterrorizar";
+	fAtacarExtra[6,2] = atacarExtra; fDurAttExtra[6,2] = durAttExtra[0]; //"Titán Demoníaco";
+	//-------------------------
+	fAtacarExtra[7,0] = atacarExtra; fDurAttExtra[7,0] = durAttExtra[0]; //"Desarmar";
+	fAtacarExtra[7,1] = atacarExtra; fDurAttExtra[7,1] = durAttExtra[0]; //"Mejorar";
+	fAtacarExtra[7,2] = atacarExtra; fDurAttExtra[7,2] = durAttExtra[0]; //"Meca";
+	
+	Si atacarExtra < fAtacarExtra[a,c] Entonces
+		atacarExtra = fAtacarExtra[a,c];
+	FinSi
+	Si durAttExtra[0] < fDurAttExtra[a,c] Entonces
+		durAttExtra[0] = fDurAttExtra[a,c];
+	FinSi
+	
+	
+FinFuncion
+
+//---------------------- Turno Extra personajes
+
+Funcion turnoExtra = turnosExtra(turnoExtra, a, c)
+	Definir fTurnoExtra Como Entero;
+	Dimension fTurnoExtra[8,3];
+	fTurnoExtra[0,0] = 0; //"Ataque Fuerte"; 
+	fTurnoExtra[0,1] = 0;//"Devolver Ataque";
+	fTurnoExtra[0,2] = 0; //"Luvia De Golpes";
+	//-------------------------
+	fTurnoExtra[1,0] = 0; //"Golpe De Bastón";
+	fTurnoExtra[1,1] = 0; //"Intangibilidad";
+	fTurnoExtra[1,2] = 1; //"Cuerpo Dividido";
+	//-------------------------
+	fTurnoExtra[2,0] = 0; //"Ataque Rápido";
+	fTurnoExtra[2,1] = 0; //"Rayo De Luz";
+	fTurnoExtra[2,2] = 2; //"Aumento De Velocidad";
+	//-------------------------
+	fTurnoExtra[3,0] = 0; //"Bola De Fuego";
+	fTurnoExtra[3,1] = 0; //"Sanación Mágica";
+	fTurnoExtra[3,2] = 0; //"Rayo";
+	//-------------------------
+	fTurnoExtra[4,0] = 0;  //"Estocada";
+	fTurnoExtra[4,1] = 0;  //"Quemadura";
+	fTurnoExtra[4,2] = 0;  //"Inmunidad";
+	//-------------------------
+	fTurnoExtra[5,0] = 0; //"Golpe Al Alma";
+	fTurnoExtra[5,1] = 0;  //"Robar Alma";
+	fTurnoExtra[5,2] = 0; //"Ayuda Del Más Allá";
+	//-------------------------
+	fTurnoExtra[6,0] = 0; //"Púas";
+	fTurnoExtra[6,1] = 0; //"Aterrorizar";
+	fTurnoExtra[6,2] = 0; //"Titán Demoníaco";
+	//-------------------------
+	fTurnoExtra[7,0] = 0; //"Desarmar";
+	fTurnoExtra[7,1] = 0; //"Mejorar";
+	fTurnoExtra[7,2] = 0; //"Meca";
+	
+	turnoExtra = fTurnoExtra[a,c];
+	
+FinFuncion
+
+//---------------------- Aumentar Defensa personajes
+
+Funcion masDefensa = aumentarDefensa(masDefensa, durMasDef, atacarExtra, aumentador, durAumentador, a, c)
+	Definir fMasDefensa Como Real;
+	Definir fDurMasDef Como Entero;
+	Dimension fMasDefensa[8,3], fDurMasDef[8,3];
+	
+	fMasDefensa[0,0] = masDefensa; fDurMasDef[0,0] = durMasDef[0]; //"Ataque Fuerte"; 
+	fMasDefensa[0,1] = masDefensa; fDurMasDef[0,1] = durMasDef[0]; //"Devolver Ataque";
+	fMasDefensa[0,2] = masDefensa; fDurMasDef[0,2] = durMasDef[0]; //"Luvia De Golpes";
+	//-------------------------
+	fMasDefensa[1,0] = masDefensa; fDurMasDef[1,0] = durMasDef[0]; //"Golpe De Bastón";
+	fMasDefensa[1,1] = masDefensa; fDurMasDef[1,1] = durMasDef[0]; //"Intangibilidad";
+	fMasDefensa[1,2] = atacarExtra; fDurMasDef[1,2] = 2; //"Cuerpo Dividido";
+	//-------------------------
+	fMasDefensa[2,0] = masDefensa; fDurMasDef[2,0] = durMasDef[0]; //"Ataque Rápido";
+	fMasDefensa[2,1] = masDefensa; fDurMasDef[2,1] = durMasDef[0]; //"Rayo De Luz";
+	fMasDefensa[2,2] = masDefensa; fDurMasDef[2,2] = durMasDef[0]; //"Aumento De Velocidad";
+	//-------------------------
+	fMasDefensa[3,0] = masDefensa; fDurMasDef[3,0] = durMasDef[0]; //"Bola De Fuego";
+	fMasDefensa[3,1] = masDefensa; fDurMasDef[3,1] = durMasDef[0]; //"Sanación Mágica";
+	fMasDefensa[3,2] = masDefensa; fDurMasDef[3,2] = durMasDef[0]; //"Rayo";
+	//-------------------------
+	fMasDefensa[4,0] = masDefensa; fDurMasDef[4,0] = durMasDef[0]; //"Estocada";
+	fMasDefensa[4,1] = masDefensa; fDurMasDef[4,1] = durMasDef[0]; //"Quemadura";
+	fMasDefensa[4,2] = 70; fDurMasDef[4,2] = 4; //"Inmunidad";
+	//-------------------------
+	fMasDefensa[5,0] = masDefensa; fDurMasDef[5,0] = durMasDef[0]; //"Golpe Al Alma";
+	fMasDefensa[5,1] = masDefensa; fDurMasDef[5,1] = durMasDef[0]; //"Robar Alma";
+	fMasDefensa[5,2] = ((aumentador[0] - 1) * 100); fDurMasDef[5,2] = durAumentador[0]; //"Ayuda Del Más Allá";
+	//-------------------------
+	fMasDefensa[6,0] = masDefensa; fDurMasDef[6,0] = durMasDef[0]; //"Púas";
+	fMasDefensa[6,1] = masDefensa; fDurMasDef[6,1] = durMasDef[0]; //"Aterrorizar";
+	fMasDefensa[6,2] = masDefensa; fDurMasDef[6,2] = durMasDef[0]; //"Titán Demoníaco";
+	//-------------------------
+	fMasDefensa[7,0] = masDefensa; fDurMasDef[7,0] = durMasDef[0]; //"Desarmar";
+	fMasDefensa[7,1] = masDefensa; fDurMasDef[7,1] = durMasDef[0]; //"Mejorar";
+	fMasDefensa[7,2] = masDefensa; fDurMasDef[7,2] = durMasDef[0]; //"Meca";
+	
+	Si masDefensa <= fMasDefensa[a,c] Entonces
+		si fDurMasDef[5,0] > 0 Entonces
+			fMasDefensa[5,0] = fMasDefensa[5,2];
+		FinSi
+		si fDurMasDef[5,1] > 0 Entonces
+			fMasDefensa[5,1] = fMasDefensa[5,2];
+		FinSi
+		
+		masDefensa = fMasDefensa[a,c];
+	FinSi
+	Si durMasDef[0] < fDurMasDef[a,c] Entonces
+		durMasDef[0] = fDurMasDef[a,c];
+	FinSi
+	si masDefensa < 0 Entonces
+		masDefensa = 0;
+	FinSi
+	
+	
+FinFuncion
+
+//---------------------- Disminuir Defensas Enemigas personajes
+
+Funcion menDefEnem = disminuirDefensasEnemigas(menDefEnem, durMenDefEnem, a, c)
+	Definir fMenDefEnem Como Real;
+	Definir fDurMenDefEnem Como Entero;
+	Dimension fMenDefEnem[8,3], fDurMenDefEnem[8,3];
+	
+	fMenDefEnem[0,0] = menDefEnem; fDurMenDefEnem[0,0] = durMenDefEnem[0]; //"Ataque Fuerte"; 
+	fMenDefEnem[0,1] = menDefEnem; fDurMenDefEnem[0,1] = durMenDefEnem[0]; //"Devolver Ataque";
+	fMenDefEnem[0,2] = menDefEnem; fDurMenDefEnem[0,2] = durMenDefEnem[0]; //"Luvia De Golpes";
+	//-------------------------
+	fMenDefEnem[1,0] = menDefEnem; fDurMenDefEnem[1,0] = durMenDefEnem[0]; //"Golpe De Bastón";
+	fMenDefEnem[1,1] = menDefEnem; fDurMenDefEnem[1,1] = durMenDefEnem[0]; //"Intangibilidad";
+	fMenDefEnem[1,2] = menDefEnem; fDurMenDefEnem[1,2] = durMenDefEnem[0]; //"Cuerpo Dividido";
+	//-------------------------
+	fMenDefEnem[2,0] = menDefEnem; fDurMenDefEnem[2,0] = durMenDefEnem[0]; //"Ataque Rápido";
+	fMenDefEnem[2,1] = menDefEnem; fDurMenDefEnem[2,1] = durMenDefEnem[0]; //"Rayo De Luz";
+	fMenDefEnem[2,2] = menDefEnem; fDurMenDefEnem[2,2] = durMenDefEnem[0]; //"Aumento De Velocidad";
+	//-------------------------
+	fMenDefEnem[3,0] = menDefEnem; fDurMenDefEnem[3,0] = durMenDefEnem[0]; //"Bola De Fuego";
+	fMenDefEnem[3,1] = menDefEnem; fDurMenDefEnem[3,1] = durMenDefEnem[0]; //"Sanación Mágica";
+	fMenDefEnem[3,2] = menDefEnem; fDurMenDefEnem[3,2] = durMenDefEnem[0]; //"Rayo";
+	//-------------------------
+	fMenDefEnem[4,0] = menDefEnem; fDurMenDefEnem[4,0] = durMenDefEnem[0]; //"Estocada";
+	fMenDefEnem[4,1] = menDefEnem; fDurMenDefEnem[4,1] = durMenDefEnem[0]; //"Quemadura";
+	fMenDefEnem[4,2] = menDefEnem; fDurMenDefEnem[4,2] = durMenDefEnem[0]; //"Inmunidad";
+	//-------------------------
+	fMenDefEnem[5,0] = menDefEnem; fDurMenDefEnem[5,0] = durMenDefEnem[0]; //"Golpe Al Alma";
+	fMenDefEnem[5,1] = menDefEnem; fDurMenDefEnem[5,1] = durMenDefEnem[0]; //"Robar Alma";
+	fMenDefEnem[5,2] = menDefEnem; fDurMenDefEnem[5,2] = durMenDefEnem[0]; //"Ayuda Del Más Allá";
+	//-------------------------
+	fMenDefEnem[6,0] = menDefEnem; fDurMenDefEnem[6,0] = durMenDefEnem[0]; //"Púas";
+	fMenDefEnem[6,1] = menDefEnem + 4; fDurMenDefEnem[6,1] = 1000; //"Aterrorizar";
+	fMenDefEnem[6,2] = menDefEnem; fDurMenDefEnem[6,2] = durMenDefEnem[0]; //"Titán Demoníaco";
+	//-------------------------
+	fMenDefEnem[7,0] = menDefEnem; fDurMenDefEnem[7,0] = durMenDefEnem[0]; //"Desarmar";
+	fMenDefEnem[7,1] = menDefEnem; fDurMenDefEnem[7,1] = durMenDefEnem[0]; //"Mejorar";
+	fMenDefEnem[7,2] = menDefEnem; fDurMenDefEnem[7,2] = durMenDefEnem[0]; //"Meca";
+	
+	
+	Si menDefEnem <= fMenDefEnem[a,c] Entonces
+		si fMenDefEnem[6,1] > 20 Entonces
+			fMenDefEnem[6,1] = 20;
+		FinSi
+		menDefEnem = fMenDefEnem[a,c];
+	FinSi
+	Si durMenDefEnem[0] < fDurMenDefEnem[a,c] Entonces
+		durMenDefEnem[0] = fDurMenDefEnem[a,c];
+	FinSi
+	si menDefEnem < 0 Entonces
+		menDefEnem = 0;
+	FinSi
+	
+	
+	
+FinFuncion
+
+//---------------------- Daño enemigos
+
+Funcion damageBaseEnemigo(damage, damageEnemigo, totalDamage, atacar, atacarEnemigo, totalDamageEnemigo, totalEfectos, totalEfectosEnemigos, vida, vidaEnemigo, vidaMaxima, vidaMaximaEnem)
+	//---------- Enemigos
+	//---------- LVL 1
+	/// enemigo /         Habilidad 1   /               Habilidad 2     /              Habilidad 3
+	//-- Bestia
+	damageEnemigo[0,0,0] = 10;      damageEnemigo[0,0,1] = 5;     damageEnemigo[0,0,2] = 20;
+	//-- Reloj Revividp
+	damageEnemigo[0,1,0] = (vida * 10/100) + 0.5;      damageEnemigo[0,1,1] = 0;      damageEnemigo[0,1,2] = vidaMaxima * 10/100;
+	//- Criatura Oscura
+	damageEnemigo[0,2,0] = 9;   damageEnemigo[0,2,1] = 0;      damageEnemigo[0,2,2] = 25;
+	//-- Slime
+	damageEnemigo[0,3,0] = 15;        damageEnemigo[0,3,1] = 10;     damageEnemigo[0,3,2] = 18;
+	//-- Saqueador
+	damageEnemigo[0,4,0] = 5.5;    damageEnemigo[0,4,1] = 5;    damageEnemigo[0,4,2] = 2.5;
+	//-- Alma Perdida
+	damageEnemigo[0,5,0] = 7.3;        damageEnemigo[0,5,1] = 0;       damageEnemigo[0,5,2] = 0;
+	//-- Zombie
+	damageEnemigo[0,6,0] = 15;      damageEnemigo[0,6,1] = 7.5;    damageEnemigo[0,6,2] = 0;
+	//-- R.D.A
+	damageEnemigo[0,7,0] = 12;   damageEnemigo[0,7,1] = 0;       damageEnemigo[0,7,2] = 2.5;
+	
+	//---------- LVL 2 
+	/// enemigo /         Habilidad 1      /               Habilidad 2      /                Habilidad 3
+	//-- Serpiente
+	damageEnemigo[1,0,0] = 10;       damageEnemigo[1,0,1] = 0;           damageEnemigo[1,0,2] = 30;
+	//-- Newton
+	damageEnemigo[1,1,0] = 17;       damageEnemigo[1,1,1] = 0;           damageEnemigo[1,1,2] = vidaMaxima * 35/100;
+	//- Sufrimiento
+	damageEnemigo[1,2,0] = 29;   damageEnemigo[1,2,1] = 0;           damageEnemigo[1,2,2] = 49;
+	//-- Planta Devoradora
+	damageEnemigo[1,3,0] = 15;     damageEnemigo[1,3,1] = 6.6;        damageEnemigo[1,3,2] = 0;
+	//-- Verdugo
+	damageEnemigo[1,4,0] = 23.3;     damageEnemigo[1,4,1] = 2.5;           damageEnemigo[1,4,2] = (vida * 50/100) + 5;
+	//-- Humano Poseido
+	damageEnemigo[1,5,0] = 5.3;       damageEnemigo[1,5,1] = 30;    damageEnemigo[1,5,2] = 0;
+	//-- Esqueleto
+	damageEnemigo[1,6,0] = 3.3;       damageEnemigo[1,6,1] = 5;    damageEnemigo[1,6,2] = 0;
+	//-- Especimen 21
+	damageEnemigo[1,7,0] = 30;       damageEnemigo[1,7,1] = 0;           damageEnemigo[1,7,2] = 50;
+	
+	//---------- LVL 3
+	/// enemigo /          Habilidad 1    /                Habilidad 2       /              Habilidad 3
+	//-- Golem de Piedra
+	damageEnemigo[2,0,0] = "Piedra";      damageEnemigo[2,0,1] = "Piedra";        damageEnemigo[2,0,2] = "Onda";
+	//-- Time-Rex
+	damageEnemigo[2,1,0] = "Tiempo";      damageEnemigo[2,1,1] = "Normal";        damageEnemigo[2,1,2] = "Explosivo";
+	//- Sombra Maligna
+	damageEnemigo[2,2,0] = "Oscuridad";   damageEnemigo[2,2,1] = "n/n";           damageEnemigo[2,2,2] = "Oscuridad";
+	//-- Alce Magico
+	damageEnemigo[2,3,0] = "Fuerte";      damageEnemigo[2,3,1] = "Luz";           damageEnemigo[2,3,2] = "Alma";
+	//-- Bufon
+	damageEnemigo[2,4,0] = "Normal";      damageEnemigo[2,4,1] = "Imaginario";    damageEnemigo[2,4,2] = "Fuerte";
+	//-- Medium 
+	damageEnemigo[2,5,0] = "Fuego";       damageEnemigo[2,5,1] = "Hielo";         damageEnemigo[2,5,2] = "Elemental";
+	//-- Vampiro
+	damageEnemigo[2,6,0] = "Normal";      damageEnemigo[2,6,1] = "Oscuridad";     damageEnemigo[2,6,2] = "n/n";
+	//-- Proyecto Eliz
+	damageEnemigo[2,7,0] = "Veneno";      damageEnemigo[2,7,1] = "n/n";           damageEnemigo[2,7,2] = "Veneno";
+	
+	//---------- LVL 4 - Boss
+	/// enemigo /          Habilidad 1   /              Habilidad 2      /                Habilidad 3
+	//-- Bestia Gigante
+	damageEnemigo[3,0,0] = "Cortante";    damageEnemigo[3,0,1] = "Onda";      damageEnemigo[3,0,2] = "Cortante";
+	//-- Guardián del Tiempo
+	damageEnemigo[3,1,0] = "Tiempo";      damageEnemigo[3,1,1] = "Tiempo";    damageEnemigo[3,1,2] = "Tiempo";
+	//- Principe de las Sombras
+	damageEnemigo[3,2,0] = "Oscuridad";   damageEnemigo[3,2,1] = "n/n";       damageEnemigo[3,2,2] = "n/n";
+	//-- Bruja
+	damageEnemigo[3,3,0] = "Normal";      damageEnemigo[3,3,1] = "n/n";       damageEnemigo[3,3,2] = "Elemental";
+	//-- Rey
+	damageEnemigo[3,4,0] = "Fuerte";      damageEnemigo[3,4,1] = "n/n";       damageEnemigo[3,4,2] = "Orden";
+	//-- Fantasma Antiguo
+	damageEnemigo[3,5,0] = "Alma";        damageEnemigo[3,5,1] = "Alma";      damageEnemigo[3,5,2] = "Oscuridad";
+	//-- La parca
+	damageEnemigo[3,6,0] = "Cortante";    damageEnemigo[3,6,1] = "n/n";       damageEnemigo[3,6,2] = "Tiempo";
+	//-- Cientifico Loco
+	damageEnemigo[3,7,0] = "Plasma";      damageEnemigo[3,7,1] = "n/n";       damageEnemigo[3,7,2] = "Veneno";
+	
+	//---------- LVL 5
+	/// enemigo /          Habilidad 1   /                 Habilidad 2    /                 Habilidad 3
+	//-- Cazador
+	damageEnemigo[4,0,0] = "Cortante";    damageEnemigo[4,0,1] = "Cortante";    damageEnemigo[0,0,2] = "Cortante";
+	//-- Baby Commander
+	damageEnemigo[4,1,0] = "Normal";      damageEnemigo[4,1,1] = "n/n";         damageEnemigo[4,1,2] = "n/n";
+	//- Caballero Oscuro
+	damageEnemigo[4,2,0] = "Oscuridad";   damageEnemigo[4,2,1] = "normal";      damageEnemigo[4,2,2] = "Oscuridad";
+	//-- Slime Gigante
+	damageEnemigo[4,3,0] = "Fuego";       damageEnemigo[4,3,1] = "n/n";         damageEnemigo[4,3,2] = "Veneno";
+	//-- Clerigo
+	damageEnemigo[4,4,0] = "Orden";       damageEnemigo[4,4,1] = "Luz";         damageEnemigo[4,4,2] = "n/n";
+	//-- Casa Maldita
+	damageEnemigo[4,5,0] = "Normal";      damageEnemigo[4,5,1] = "Imaginario";  damageEnemigo[4,5,2] = "Alma";
+	//-- Chupacabras
+	damageEnemigo[4,6,0] = "Cortante";    damageEnemigo[4,6,1] = "Cortante";    damageEnemigo[4,6,2] = "n/n";
+	//-- Experimento Medusa
+	damageEnemigo[4,7,0] = "Normal";      damageEnemigo[4,7,1] = "n/n";         damageEnemigo[4,7,2] = "Piedra";
+	
+	//---------- LVL 6
+	/// enemigo /        Habilidad 1    /                Habilidad 2     /               Habilidad 3
+	//-- Toxic King
+	damageEnemigo[5,0,0] = "Veneno";     damageEnemigo[5,0,1] = "Veneno";     damageEnemigo[5,0,2] = "Veneno";
+	//-- Glitch
+	damageEnemigo[5,1,0] = "Vacío";      damageEnemigo[5,1,1] = "Vacío";      damageEnemigo[5,1,2] = "Vacío";
+	//- Imitador
+	damageEnemigo[5,2,0] = "n/n";        damageEnemigo[5,2,1] = "n/n";        damageEnemigo[5,2,2] = "n/n";
+	//-- Fenix
+	damageEnemigo[5,3,0] = "Fuego";      damageEnemigo[5,3,1] = "Fuego";      damageEnemigo[5,3,2] = "n/n";
+	//-- Gran Caballero Real
+	damageEnemigo[5,4,0] = "Cortante";   damageEnemigo[5,4,1] = "n/n";        damageEnemigo[5,4,2] = "Orden";
+	//-- Mujer Del Espejo
+	damageEnemigo[5,5,0] = "Luz";        damageEnemigo[5,5,1] = "n/n";        damageEnemigo[5,5,2] = "n/n";
+	//-- Cerbero
+	damageEnemigo[5,6,0] = "Normal";     damageEnemigo[5,6,1] = "Cortante";   damageEnemigo[5,6,2] = "Fuerte";
+	//-- R.P.P
+	damageEnemigo[5,7,0] = "Fuerte";     damageEnemigo[5,7,1] = "n/n";        damageEnemigo[5,7,2] = "Explosivo";
+	
+	//---------- LVL 7
+	/// enemigo /         Habilidad 1     /                 Habilidad 2      /                Habilidad 3
+	//-- Madre Planta
+	damageEnemigo[6,0,0] = "Planta";       damageEnemigo[6,0,1] = "n/n";           damageEnemigo[6,0,2] = "Planta";
+	//-- C.Milos
+	damageEnemigo[6,1,0] = "Normal";       damageEnemigo[6,1,1] = "Tiempo";        damageEnemigo[6,1,2] = "Vacío";
+	//- Pesadilla
+	damageEnemigo[6,2,0] = "Imaginario";   damageEnemigo[6,2,1] = "Imaginario";    damageEnemigo[6,2,2] = "Imaginario";
+	//-- Monstruo De Nieve
+	damageEnemigo[6,3,0] = "Nieve";        damageEnemigo[6,3,1] = "Nieve";         damageEnemigo[6,3,2] = "Hielo";
+	//-- Reina
+	damageEnemigo[6,4,0] = "Caos";         damageEnemigo[6,4,1] = "n/n";           damageEnemigo[6,4,2] = "Orden";
+	//-- El Maligno
+	damageEnemigo[6,5,0] = "Alma";         damageEnemigo[6,5,1] = "n/n";           damageEnemigo[6,5,2] = "Alma";
+	//-- Guardian Del Inframundo
+	damageEnemigo[6,6,0] = "Cortante";     damageEnemigo[6,6,1] = "Fuego";         damageEnemigo[6,6,2] = "Oscuridad";
+	//-- H4R2
+	damageEnemigo[6,7,0] = "Explosivo";    damageEnemigo[6,7,1] = "Electrico";     damageEnemigo[6,7,2] = "n/n";
+	
+	//---------- LVL 8
+	/// enemigo /          Habilidad 1   /                   Habilidad 2    /                   Habilidad 3
+	//-- Cambia Formas
+	damageEnemigo[0,0,0] = "n/n";         damageEnemigo[0,0,1] = "n/n";           damageEnemigo[0,0,2] = "n/n";
+	//-- Entidad Del Tiempo
+	damageEnemigo[0,1,0] = "Tiempo";      damageEnemigo[0,1,1] = "n/n";           damageEnemigo[0,1,2] = "Tiempo";
+	//- Dios De La Luna
+	damageEnemigo[0,2,0] = "Oscuridad";   damageEnemigo[0,2,1] = "Oscuridad";     damageEnemigo[0,2,2] = "Vacío";
+	//-- Maestro Mago
+	damageEnemigo[0,3,0] = "Elemental";   damageEnemigo[0,3,1] = "Explosivo";     damageEnemigo[0,3,2] = "Elemental";
+	//-- Dragon
+	damageEnemigo[0,4,0] = "Fuego";       damageEnemigo[0,4,1] = "Imaginario";    damageEnemigo[0,4,2] = "Caos";
+	//-- Almalgama De Almas
+	damageEnemigo[0,5,0] = "Alma";        damageEnemigo[0,5,1] = "n/n";           damageEnemigo[0,5,2] = "Alma";
+	//-- Rey Demonio
+	damageEnemigo[0,6,0] = "Marchitar";   damageEnemigo[0,6,1] = "Marchitar";     damageEnemigo[0,6,2] = "Caos";
+	//-- IA
+	damageEnemigo[0,7,0] = "Plasma";      damageEnemigo[0,7,1] = "Vacio";         damageEnemigo[0,7,2] = "n/n";
+	
+	
+FinFuncion
+
+//----
+Funcion especies(especie, especieEnem)
+	especie[0] = "Human@"; //- Tank
+	especie[1] = "Human@"; //- Commander
+	especie[2] = "Brillante"; //- Sprinter
+	especie[3] = "Magic@"; //- Magician
+	especie[4] = "Human@"; //- Knight
+	especie[5] = "Guardián"; //- Guardian
+	especie[6] = "Demonio"; //- Sectarian
+	especie[7] = "Human@"; //- Engineer
+	
+	//---- enemigos 
+	//-- LVL 1
+	especieEnem[0,0] = "Criatura";
+	especieEnem[0,1] = "Objeto";
+	especieEnem[0,2] = "Oscuro";
+	especieEnem[0,3] = "Slime";
+	especieEnem[0,4] = "Human@";
+	especieEnem[0,5] = "Fantasma";
+	especieEnem[0,6] = "No-Muerto";
+	especieEnem[0,7] = "Robot";
+	//-- LVL 2
+	especieEnem[1,0] = "Criatura";
+	especieEnem[1,1] = "Human@";
+	especieEnem[1,2] = "Oscuro";
+	especieEnem[1,3] = "Planta";
+	especieEnem[1,4] = "Human@";
+	especieEnem[1,5] = "No-Muerto";
+	especieEnem[1,6] = "No-Muerto";
+	especieEnem[1,7] = "Criatura";
+	//-- LVL 3
+	especieEnem[2,0] = "Piedra";
+	especieEnem[2,1] = "Criatura";
+	especieEnem[2,2] = "Oscuro";
+	especieEnem[2,3] = "Magic@";
+	especieEnem[2,4] = "Human@";
+	especieEnem[2,5] = "Human@";
+	especieEnem[2,6] = "No-Muerto";
+	especieEnem[2,7] = "Guardián";
+	//-- LVL 4
+	especieEnem[3,0] = "Criatura";
+	especieEnem[3,1] = "Guardián";
+	especieEnem[3,2] = "Oscuro";
+	especieEnem[3,3] = "Magic@";
+	especieEnem[3,4] = "Human@";
+	especieEnem[3,5] = "Fantasma";
+	especieEnem[3,6] = "No-Muerto";
+	especieEnem[3,7] = "Human@";
+	//-- LVL 5
+	especieEnem[4,0] = "Human@";
+	especieEnem[4,1] = "Human@";
+	especieEnem[4,2] = "Oscuro";
+	especieEnem[4,3] = "Slime";
+	especieEnem[4,4] = "Human@";
+	especieEnem[4,5] = "Objeto";
+	especieEnem[4,6] = "Criatura";
+	especieEnem[4,7] = "Criatura";
+	//-- LVL 6
+	especieEnem[5,0] = "Toxic@";
+	especieEnem[5,1] = "Especial";
+	especieEnem[5,2] = "Oscuro";
+	especieEnem[5,3] = "Fuego";
+	especieEnem[5,4] = "Human@";
+	especieEnem[5,5] = "Demonio";
+	especieEnem[5,6] = "Criatura";
+	especieEnem[5,7] = "Robot";
+	//-- LVL 7
+	especieEnem[6,0] = "Planta";
+	especieEnem[6,1] = "Human@";
+	especieEnem[6,2] = "Oscuro";
+	especieEnem[6,3] = "Nieve";
+	especieEnem[6,4] = "Human@";
+	especieEnem[6,5] = "Guardián";
+	especieEnem[6,6] = "Demonio";
+	especieEnem[6,7] = "Robot";
+	//-- LVL 8
+	especieEnem[7,0] = "Especial";
+	especieEnem[7,1] = "Entidad";
+	especieEnem[7,2] = "Dios";
+	especieEnem[7,3] = "Magic@";
+	especieEnem[7,4] = "Criatura";
+	especieEnem[7,5] = "Fantasma";
+	especieEnem[7,6] = "Demonio";
+	especieEnem[7,7] = "Robot";
+	
+	
+	
+FinFuncion
+//-
+Funcion elementos(elemento, elementoEnem)
+	
+	
+	/// personaje /   Habilidad 1  /     Habilidad 2      /     Habilidad 3
+	//-- Tank
+	elemento[0,0] = "Fuerte";   elemento[0,1] = "n/n";    elemento[0,2] = "Fuerte";
+	//-- Commander
+	elemento[1,0] = "Normal";   elemento[1,1] = "n/n";    elemento[1,2] = "n/n";
+	//- Sprinter
+	elemento[2,0] = "Normal";   elemento[2,1] = "Luz";    elemento[2,2] = "n/n";
+	//-- Magician
+	elemento[3,0] = "Fuego";    elemento[3,1] = "n/n";    elemento[3,2] = "Electrico";
+	//-- Knight
+	elemento[4,0] = "Cortante"; elemento[4,1] = "Orden";  elemento[4,2] = "n/n";
+	//-- Guardian
+	elemento[5,0] = "Alma";     elemento[5,1] = "Alma";   elemento[5,2] = "n/n";
+	//-- Sectarian
+	elemento[6,0] = "Cortante"; elemento[6,1] = "n/n";    elemento[6,2] = "Marchitar";
+	//-- Engineer
+	elemento[7,0] = "Normal";   elemento[7,1] = "n/n";    elemento[7,2] = "Explosivo";
+	
+	
+	//---------- Enemigos
+	//---------- LVL 1
+	/// enemigo /         Habilidad 1   /               Habilidad 2     /              Habilidad 3
+	//-- Bestia
+	elementoEnem[0,0,0] = "Normal";      elementoEnem[0,0,1] = "Onda";     elementoEnem[0,0,2] = "Cortante";
+	//-- Reloj Revividp
+	elementoEnem[0,1,0] = "Tiempo";      elementoEnem[0,1,1] = "n/n";      elementoEnem[0,1,2] = "Tiempo";
+	//- Criatura Oscura
+	elementoEnem[0,2,0] = "Oscuridad";   elementoEnem[0,2,1] = "n/n";      elementoEnem[0,2,2] = "Oscuridad";
+	//-- Slime
+	elementoEnem[0,3,0] = "Baba";        elementoEnem[0,3,1] = "Baba";     elementoEnem[0,3,2] = "Veneno";
+	//-- Saqueador
+	elementoEnem[0,4,0] = "Cortante";    elementoEnem[0,4,1] = "Normal";    elementoEnem[0,4,2] = "n/n";
+	//-- Alma Perdida
+	elementoEnem[0,5,0] = "Alma";        elementoEnem[0,5,1] = "n/n";       elementoEnem[0,5,2] = "n/n";
+	//-- Zombie
+	elementoEnem[0,6,0] = "Normal";      elementoEnem[0,6,1] = "Veneno";    elementoEnem[0,6,2] = "n/n";
+	//-- R.D.A
+	elementoEnem[0,7,0] = "Electrico";   elementoEnem[0,7,1] = "n/n";       elementoEnem[0,7,2] = "Cortante";
+	
+	//---------- LVL 2 
+	/// enemigo /         Habilidad 1      /               Habilidad 2      /                Habilidad 3
+	//-- Serpiente
+	elementoEnem[1,0,0] = "Veneno";       elementoEnem[1,0,1] = "n/n";           elementoEnem[1,0,2] = "Fuerte";
+	//-- Newton
+	elementoEnem[1,1,0] = "Normal";       elementoEnem[1,1,1] = "n/n";           elementoEnem[1,1,2] = "Onda";
+	//- Sufrimiento
+	elementoEnem[1,2,0] = "Imaginario";   elementoEnem[1,2,1] = "n/n";           elementoEnem[1,2,2] = "Imaginario";
+	//-- Planta Devoradora
+	elementoEnem[1,3,0] = "Cortante";     elementoEnem[1,3,1] = "Veneno";        elementoEnem[1,3,2] = "n/n";
+	//-- Verdugo
+	elementoEnem[1,4,0] = "Cortante";     elementoEnem[1,4,1] = "n/n";           elementoEnem[1,4,2] = "Cortante";
+	//-- Humano Poseido
+	elementoEnem[1,5,0] = "Normal";       elementoEnem[1,5,1] = "Imaginario";    elementoEnem[1,5,2] = "n/n";
+	//-- Esqueleto
+	elementoEnem[1,6,0] = "Normal";       elementoEnem[1,6,1] = "Imaginario";    elementoEnem[1,6,2] = "n/n";
+	//-- Especimen 21
+	elementoEnem[1,7,0] = "Fuerte";       elementoEnem[1,7,1] = "n/n";           elementoEnem[1,7,2] = "Fuerte";
+	
+	//---------- LVL 3
+	/// enemigo /          Habilidad 1    /                Habilidad 2       /              Habilidad 3
+	//-- Golem de Piedra
+	elementoEnem[2,0,0] = "Piedra";      elementoEnem[2,0,1] = "Piedra";        elementoEnem[2,0,2] = "Onda";
+	//-- Time-Rex
+	elementoEnem[2,1,0] = "Tiempo";      elementoEnem[2,1,1] = "Normal";        elementoEnem[2,1,2] = "Explosivo";
+	//- Sombra Maligna
+	elementoEnem[2,2,0] = "Oscuridad";   elementoEnem[2,2,1] = "n/n";           elementoEnem[2,2,2] = "Oscuridad";
+	//-- Alce Magico
+	elementoEnem[2,3,0] = "Fuerte";      elementoEnem[2,3,1] = "Luz";           elementoEnem[2,3,2] = "Alma";
+	//-- Bufon
+	elementoEnem[2,4,0] = "Normal";      elementoEnem[2,4,1] = "Imaginario";    elementoEnem[2,4,2] = "Fuerte";
+	//-- Medium 
+	elementoEnem[2,5,0] = "Fuego";       elementoEnem[2,5,1] = "Hielo";         elementoEnem[2,5,2] = "Elemental";
+	//-- Vampiro
+	elementoEnem[2,6,0] = "Normal";      elementoEnem[2,6,1] = "Oscuridad";     elementoEnem[2,6,2] = "n/n";
+	//-- Proyecto Eliz
+	elementoEnem[2,7,0] = "Veneno";      elementoEnem[2,7,1] = "n/n";           elementoEnem[2,7,2] = "Veneno";
+	
+	//---------- LVL 4 - Boss
+	/// enemigo /          Habilidad 1   /              Habilidad 2      /                Habilidad 3
+	//-- Bestia Gigante
+	elementoEnem[3,0,0] = "Cortante";    elementoEnem[3,0,1] = "Onda";      elementoEnem[3,0,2] = "Cortante";
+	//-- Guardián del Tiempo
+	elementoEnem[3,1,0] = "Tiempo";      elementoEnem[3,1,1] = "Tiempo";    elementoEnem[3,1,2] = "Tiempo";
+	//- Principe de las Sombras
+	elementoEnem[3,2,0] = "Oscuridad";   elementoEnem[3,2,1] = "n/n";       elementoEnem[3,2,2] = "n/n";
+	//-- Bruja
+	elementoEnem[3,3,0] = "Normal";      elementoEnem[3,3,1] = "n/n";       elementoEnem[3,3,2] = "Elemental";
+	//-- Rey
+	elementoEnem[3,4,0] = "Fuerte";      elementoEnem[3,4,1] = "n/n";       elementoEnem[3,4,2] = "Orden";
+	//-- Fantasma Antiguo
+	elementoEnem[3,5,0] = "Alma";        elementoEnem[3,5,1] = "Alma";      elementoEnem[3,5,2] = "Oscuridad";
+	//-- La parca
+	elementoEnem[3,6,0] = "Cortante";    elementoEnem[3,6,1] = "n/n";       elementoEnem[3,6,2] = "Tiempo";
+	//-- Cientifico Loco
+	elementoEnem[3,7,0] = "Plasma";      elementoEnem[3,7,1] = "n/n";       elementoEnem[3,7,2] = "Veneno";
+	
+	//---------- LVL 5
+	/// enemigo /          Habilidad 1   /                 Habilidad 2    /                 Habilidad 3
+	//-- Cazador
+	elementoEnem[4,0,0] = "Cortante";    elementoEnem[4,0,1] = "Cortante";    elementoEnem[0,0,2] = "Cortante";
+	//-- Baby Commander
+	elementoEnem[4,1,0] = "Normal";      elementoEnem[4,1,1] = "n/n";         elementoEnem[4,1,2] = "n/n";
+	//- Caballero Oscuro
+	elementoEnem[4,2,0] = "Oscuridad";   elementoEnem[4,2,1] = "normal";      elementoEnem[4,2,2] = "Oscuridad";
+	//-- Slime Gigante
+	elementoEnem[4,3,0] = "Fuego";       elementoEnem[4,3,1] = "n/n";         elementoEnem[4,3,2] = "Veneno";
+	//-- Clerigo
+	elementoEnem[4,4,0] = "Orden";       elementoEnem[4,4,1] = "Luz";         elementoEnem[4,4,2] = "n/n";
+	//-- Casa Maldita
+	elementoEnem[4,5,0] = "Normal";      elementoEnem[4,5,1] = "Imaginario";   elementoEnem[4,5,2] = "Alma";
+	//-- Chupacabras
+	elementoEnem[4,6,0] = "Cortante";    elementoEnem[4,6,1] = "Cortante";    elementoEnem[4,6,2] = "n/n";
+	//-- Experimento Medusa
+	elementoEnem[4,7,0] = "Normal";      elementoEnem[4,7,1] = "n/n";         elementoEnem[4,7,2] = "Piedra";
+	
+	//---------- LVL 6
+	/// enemigo /        Habilidad 1    /                Habilidad 2     /               Habilidad 3
+	//-- Toxic King
+	elementoEnem[5,0,0] = "Veneno";     elementoEnem[5,0,1] = "Veneno";     elementoEnem[5,0,2] = "Veneno";
+	//-- Glitch
+	elementoEnem[5,1,0] = "Vacío";      elementoEnem[5,1,1] = "Vacío";      elementoEnem[5,1,2] = "Vacío";
+	//- Imitador
+	elementoEnem[5,2,0] = "n/n";        elementoEnem[5,2,1] = "n/n";        elementoEnem[5,2,2] = "n/n";
+	//-- Fenix
+	elementoEnem[5,3,0] = "Fuego";      elementoEnem[5,3,1] = "Fuego";      elementoEnem[5,3,2] = "n/n";
+	//-- Gran Caballero Real
+	elementoEnem[5,4,0] = "Cortante";   elementoEnem[5,4,1] = "n/n";        elementoEnem[5,4,2] = "Orden";
+	//-- Mujer Del Espejo
+	elementoEnem[5,5,0] = "Luz";        elementoEnem[5,5,1] = "n/n";        elementoEnem[5,5,2] = "n/n";
+	//-- Cerbero
+	elementoEnem[5,6,0] = "Normal";     elementoEnem[5,6,1] = "Cortante";   elementoEnem[5,6,2] = "Fuerte";
+	//-- R.P.P
+	elementoEnem[5,7,0] = "Fuerte";     elementoEnem[5,7,1] = "n/n";        elementoEnem[5,7,2] = "Explosivo";
+	
+	//---------- LVL 7
+	/// enemigo /         Habilidad 1     /                 Habilidad 2      /                Habilidad 3
+	//-- Madre Planta
+	elementoEnem[6,0,0] = "Planta";       elementoEnem[6,0,1] = "n/n";           elementoEnem[6,0,2] = "Planta";
+	//-- C.Milos
+	elementoEnem[6,1,0] = "Normal";       elementoEnem[6,1,1] = "Tiempo";        elementoEnem[6,1,2] = "Vacío";
+	//- Pesadilla
+	elementoEnem[6,2,0] = "Imaginario";   elementoEnem[6,2,1] = "Imaginario";    elementoEnem[6,2,2] = "Imaginario";
+	//-- Monstruo De Nieve
+	elementoEnem[6,3,0] = "Nieve";        elementoEnem[6,3,1] = "Nieve";         elementoEnem[6,3,2] = "Hielo";
+	//-- Reina
+	elementoEnem[6,4,0] = "Caos";         elementoEnem[6,4,1] = "n/n";           elementoEnem[6,4,2] = "Orden";
+	//-- El Maligno
+	elementoEnem[6,5,0] = "Alma";         elementoEnem[6,5,1] = "n/n";           elementoEnem[6,5,2] = "Alma";
+	//-- Guardian Del Inframundo
+	elementoEnem[6,6,0] = "Cortante";     elementoEnem[6,6,1] = "Fuego";         elementoEnem[6,6,2] = "Oscuridad";
+	//-- H4R2
+	elementoEnem[6,7,0] = "Explosivo";    elementoEnem[6,7,1] = "Electrico";     elementoEnem[6,7,2] = "n/n";
+	
+	//---------- LVL 8
+	/// enemigo /          Habilidad 1   /                   Habilidad 2    /                   Habilidad 3
+	//-- Cambia Formas
+	elementoEnem[0,0,0] = "n/n";         elementoEnem[0,0,1] = "n/n";           elementoEnem[0,0,2] = "n/n";
+	//-- Entidad Del Tiempo
+	elementoEnem[0,1,0] = "Tiempo";      elementoEnem[0,1,1] = "n/n";           elementoEnem[0,1,2] = "Tiempo";
+	//- Dios De La Luna
+	elementoEnem[0,2,0] = "Oscuridad";   elementoEnem[0,2,1] = "Oscuridad";     elementoEnem[0,2,2] = "Vacío";
+	//-- Maestro Mago
+	elementoEnem[0,3,0] = "Elemental";   elementoEnem[0,3,1] = "Explosivo";     elementoEnem[0,3,2] = "Elemental";
+	//-- Dragon
+	elementoEnem[0,4,0] = "Fuego";       elementoEnem[0,4,1] = "Imaginario";    elementoEnem[0,4,2] = "Caos";
+	//-- Almalgama De Almas
+	elementoEnem[0,5,0] = "Alma";        elementoEnem[0,5,1] = "n/n";           elementoEnem[0,5,2] = "Alma";
+	//-- Rey Demonio
+	elementoEnem[0,6,0] = "Marchitar";   elementoEnem[0,6,1] = "Marchitar";     elementoEnem[0,6,2] = "Caos";
+	//-- IA
+	elementoEnem[0,7,0] = "Plasma";      elementoEnem[0,7,1] = "Vacio";         elementoEnem[0,7,2] = "n/n";
+	
+FinFuncion
+//----
+
+Funcion Energy(costoEnergia)
+	costoEnergia[0] = 0; costoEnergia[1] = 10; costoEnergia[2] = 100;
+	
+FinFuncion
+
+Funcion administraciones(damage, cura, damageTotal, efectos, auxV)
+ cura[0] = 0; damageTotal[0] = 0;  efectos[0] = 0;
+
+FinFuncion
+Funcion administracionesEnemigos(damageEnemigo, curaEnemigo, damageTotalEnemigo, efectosEnemigos, auxVE)
+curaEnemigo[0] = 0; damageTotalEnemigo[0] = 0;  efectosEnemigos[0] = 0;
+	
+	
+FinFuncion
